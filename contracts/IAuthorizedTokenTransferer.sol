@@ -1,7 +1,7 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 interface IAuthorizedTokenTransferer {
 
-    function transfer(address token, address from, address to, uint amount) external;
+    function transfer(address from, address to, address token, uint amount) external;
 
 }

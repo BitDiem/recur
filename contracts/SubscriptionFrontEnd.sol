@@ -1,9 +1,8 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "./IAuthorizedTokenTransferer.sol";
-import "./FixedRateSubscription.sol";
-import "./VariableRateSubscription.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "./ComposedSubscription.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 contract SubscriptionFrontEnd is IAuthorizedTokenTransferer {
 
@@ -13,15 +12,16 @@ contract SubscriptionFrontEnd is IAuthorizedTokenTransferer {
         address payee,
         address token, 
         uint amount,
-        uint interval
+        uint interval,
+        uint delay
     )
         public
         returns (address)
     {
         address payor = msg.sender;
-        FixedRateSubscription sub = new FixedRateSubscription(this, payor, payee, token, amount, interval);
+        ComposedSubscription sub = new ComposedSubscription(this, payor, payee, token, amount, interval, delay);
         activeSubs[address(sub)] = true;
-        return sub;
+        return address(sub);
     }
 
     function transfer(
@@ -33,7 +33,7 @@ contract SubscriptionFrontEnd is IAuthorizedTokenTransferer {
         public
     {
         require(activeSubs[msg.sender]);
-        ERC20 tokenContract = ERC20(token);
+        IERC20 tokenContract = IERC20(token);
         require (tokenContract.allowance(from, address(this)) >= amount, "Token transfer not authorized");
         tokenContract.transferFrom(from, to, amount);
     }
