@@ -52,6 +52,14 @@ module.exports = {
     //  network_id: "*",       // Any network (default: none)
     // },
 
+    development: {
+      host: "127.0.0.1",
+      port: 7545,
+      network_id: "*",
+      gasPrice: 1,
+      gas: 6000000
+    }
+
     // Another network with more advanced options...
     // advanced: {
       // port: 8777,             // Custom port
@@ -98,6 +106,12 @@ module.exports = {
       //  },
       //  evmVersion: "byzantium"
       // }
+      
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+
     }
   }
 }

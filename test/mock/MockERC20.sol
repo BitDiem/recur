@@ -14,8 +14,8 @@ contract MockERC20 is IERC20, ERC20, ERC20Detailed {
     uint8 private constant DECIMALS = 18;
 
     constructor(
-        string name, 
-        string symbol, 
+        string memory name, 
+        string memory symbol, 
         address holder,
         uint totalSupply
     ) 

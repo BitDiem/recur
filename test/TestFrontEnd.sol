@@ -2,8 +2,6 @@ pragma solidity ^0.5.0;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "../contracts/frontend/SubscriptionFrontEnd.sol";
 import "./mock/MockERC20.sol";
 
@@ -17,7 +15,7 @@ contract TestFrontEnd {
 
         SubscriptionFrontEnd fe = new SubscriptionFrontEnd();
 
-        mockERC20.authorize(fe, 100000000);
+        mockERC20.approve(address(fe), 100000000);
 
         address sub = fe.createFixedRateSubscription(
             payee,
