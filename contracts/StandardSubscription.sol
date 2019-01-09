@@ -32,11 +32,11 @@ contract StandardSubscription is PaymentProcessor {
     function payCurrentAmountDue() public {
         uint newAmountDue = _paymentTerms.currentAmountDue();
         uint totalAmountDue = newAmountDue.add(_debt.get());
-        (uint amountPaid, uint remainder) = pay(totalAmountDue);
+        (, uint remainder) = pay(totalAmountDue);
 
         _debt.set(remainder);
 
-        _paymentTerms.markAsPaid(amountPaid);
+        _paymentTerms.markAsPaid(newAmountDue);
     }
 
     function endSubscription() public {
