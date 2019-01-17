@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/frontend/SubscriptionFrontEnd.sol";
+import "../contracts/StandardSubscription.sol";
 import "./mock/MockERC20.sol";
 
 contract TestFrontEnd {
@@ -26,5 +27,7 @@ contract TestFrontEnd {
         );
 
         StandardSubscription(sub).payCurrentAmountDue();
+
+        Assert.equal(payor, payee, "hello hi");
     }
 }
