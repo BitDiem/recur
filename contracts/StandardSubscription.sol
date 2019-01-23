@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 import "./payment/PaymentProcessor.sol";
 import "./payment/Balance.sol";
-import "./terms/ISubscriptionPaymentTerms.sol";
+import "./terms/IPaymentTerms.sol";
 import "./accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
@@ -11,7 +11,7 @@ contract StandardSubscription is PaymentProcessor {
     using SafeMath for uint;
 
     Balance private _debt;
-    ISubscriptionPaymentTerms private _paymentTerms;
+    IPaymentTerms private _paymentTerms;
 
     event SubscriptionEnded(address endedBy);
 
@@ -20,7 +20,7 @@ contract StandardSubscription is PaymentProcessor {
         address payee,
         IAuthorizedTokenTransferer authorizedTransferer,
         address token,
-        ISubscriptionPaymentTerms paymentTerms
+        IPaymentTerms paymentTerms
     ) 
         PaymentProcessor(payor, payee, authorizedTransferer, token)
         public 

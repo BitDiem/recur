@@ -1,9 +1,9 @@
 pragma solidity ^0.5.0;
 
-import "./ISubscriptionPaymentTerms.sol";
+import "./IPaymentTerms.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract SubscriptionRecurringPaymentTerms is ISubscriptionPaymentTerms {
+contract RecurringPaymentTerms is IPaymentTerms {
 
     using SafeMath for uint;
 
@@ -29,7 +29,7 @@ contract SubscriptionRecurringPaymentTerms is ISubscriptionPaymentTerms {
     {
         _amount = amount;
         _timeInterval = timeInterval;
-        _lastIntervalTime = now + delay;
+        _lastIntervalTime = _getCurrentTimeInUnixMilliseconds().add(delay);
     }
 
     function currentAmountDue() public returns (uint) {
@@ -42,7 +42,7 @@ contract SubscriptionRecurringPaymentTerms is ISubscriptionPaymentTerms {
     }
 
     function _toCurrentTime() private {
-        uint currentTime = now;
+        uint currentTime = _getCurrentTimeInUnixMilliseconds();
         uint elapsedTime = currentTime - _lastIntervalTime;
         uint div = elapsedTime / _timeInterval;
 
@@ -61,6 +61,11 @@ contract SubscriptionRecurringPaymentTerms is ISubscriptionPaymentTerms {
             _outstandingIntervals, 
             _lastIntervalTime
         );
+    }
+
+    /// Wrap the call and make it internal - makes it easy to create a derived mock class
+    function _getCurrentTimeInUnixMilliseconds() internal view returns (uint) {
+        return now;
     }
 
 /*
