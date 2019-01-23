@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-interface IPaymentTerms {
+interface IPaymentObligation {
 
     function currentAmountDue() external returns (uint);
 
