@@ -31,7 +31,7 @@ contract("Testing", accounts => {
         payor = accounts[1];
         payee = accounts[2];
         mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", tokenBank, startingTokenBalance * 100);
-        await mockERC20.transfer(payor.address, startingTokenBalance, {from: tokenBank});
+        await mockERC20.transfer(payor, startingTokenBalance, {from: tokenBank});
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
         subscription = await StandardSubscription.new(
@@ -42,7 +42,7 @@ contract("Testing", accounts => {
             paymentTerms.address);
 
         await authorizedTokenTransferer.addToWhitelist(subscription.address);
-        await mockERC20.approve(authorizedTokenTransferer.address, startingTokenBalance, {from: payor});
+        await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
       })
 
   it("should not pay when no time has transpired", async () => {  
@@ -51,9 +51,6 @@ contract("Testing", accounts => {
 
     await updateState();
 
-    //payorTokenBalance = await mockERC20.balanceOf(payor);
-    //payeeTokenBalance = await mockERC20.balanceOf(payee);
-
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
     assert.equal(payeeTokenBalance, 0, "Unexpected value");
   });
@@ -61,87 +58,104 @@ contract("Testing", accounts => {
   it("should deduct from credits (2) when available", async () => {    
     // add 2 credits to the subscription
     await subscription.addCredit(2, {from: payee});
-    creditBalance = await subscription.getCredit();
-    assert.equal(creditBalance.valueOf(), 2, "2 credits");
+    await updateState();
+    assert.equal(creditBalance, 2, "2 credits");
 
-    await paymentTerms.setCurrentTimeStamp(1);
-    await subscription.payCurrentAmountDue();
-    creditBalance = await subscription.getCredit();
-    assert.equal(creditBalance.valueOf(), 1, "1 credits");
+    await advance(1);
+    assert.equal(creditBalance, 1, "1 credits");
 
-    await paymentTerms.setCurrentTimeStamp(2);
-    await subscription.payCurrentAmountDue();
-    creditBalance = await subscription.getCredit();
-    assert.equal(creditBalance.valueOf(), 0, "0 credits");
+    await advance(2);
+    assert.equal(creditBalance, 0, "0 credits");
 
-    await paymentTerms.setCurrentTimeStamp(3);
-    await subscription.payCurrentAmountDue();
-    creditBalance = await subscription.getCredit();
-    assert.equal(creditBalance.valueOf(), 0, "0 credits");
+    await advance(3);
+    assert.equal(creditBalance, 0, "0 credits");
   });
 
-  it("should deduct from subscription wallet token balance", async () => {    
+  it("should deduct from subscription wallet token balance when available", async () => {    
     // transfer a token balance to the subscription
     await mockERC20.transfer(subscription.address, 2, {from: tokenBank});
     await updateState();
-    //subscriptionTokenBalance = await mockERC20.balanceOf(subscription);
-    //payeeTokenBalance = await mockERC20.balanceOf(payee);
+  
     assert.equal(subscriptionTokenBalance, 2, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
     assert.equal(payeeTokenBalance, 0, "Unexpected value");
 
-    await paymentTerms.setCurrentTimeStamp(1);
-    await subscription.payCurrentAmountDue();
-    await updateState();
-    //subscriptionTokenBalance = await mockERC20.balanceOf(subscription);
-    //payeeTokenBalance = await mockERC20.balanceOf(payee);
+    await advance(1);
     assert.equal(subscriptionTokenBalance, 1, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
     assert.equal(payeeTokenBalance, 1, "Unexpected value");
 
-    await paymentTerms.setCurrentTimeStamp(1);
-    await subscription.payCurrentAmountDue();
-    await updateState();
-
+    await advance(2);
     assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
     assert.equal(payeeTokenBalance, 2, "Unexpected value");
 
-    await paymentTerms.setCurrentTimeStamp(1);
-    await subscription.payCurrentAmountDue();
-    await updateState();
-
+    await advance(3);
     assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance - 1, "Unexpected value");
     assert.equal(payeeTokenBalance, 3, "Unexpected value");
   });
 
-  /*it("should use all available resources - credits, balance, wallet", async () => {    
+  it("should use all available resources - credits, balance, wallet", async () => {    
     // transfer a token balance to the subscription
-    await mockERC20.transfer(subscription.address, 1, {from: tokenBank});
+    await mockERC20.transfer(subscription.address, 2, {from: tokenBank});
 
     // add credits
     await subscription.addCredit(2, {from: payee});
 
-    await paymentTerms.setCurrentTimeStamp(20);
-    await subscription.payCurrentAmountDue();
+    await advance(20);
 
-    creditBalance = await subscription.getCredit();
-    assert.equal(creditBalance.valueOf(), 3, "No credit to start");
+    assert.equal(creditBalance, 0, "Credit");
+    assert.equal(subscriptionTokenBalance, 0, "Subscription balance");
 
-  });*/
+    // starting balance - 20 - 4 (2 credits and 2 from subscription balance)
+    assert.equal(payorTokenBalance, startingTokenBalance - 16, "Payor balance");
+
+    // 20 less 2 credits, which are always virtual
+    assert.equal(payeeTokenBalance, 18, "Payee balance");
+  });
+
+  it("should track debt", async () => {    
+    await advance(110);
+    assertState(0, 0, 0, 100);
+
+    await mockERC20.transfer(payor, 15, {from: tokenBank});
+    // total 115 ever held by payor
+
+    await advance(120);
+    assertState(0, 0, 0, 115);
+
+    await mockERC20.transfer(payor, 20, {from: tokenBank});
+    // total 135 ever held by payor
+
+    await advance(130);
+    assertState(0, 0, 5, 130);
+  });
 
   async function updateState() {
     creditBalance = (await subscription.getCredit()).valueOf();
     subscriptionTokenBalance = (await mockERC20.balanceOf(subscription.address)).valueOf();
-    payorTokenBalance = (await mockERC20.balanceOf(payor.address)).valueOf();
-    payeeTokenBalance = (await mockERC20.balanceOf(payee.address)).valueOf();
+    payorTokenBalance = (await mockERC20.balanceOf(payor)).valueOf();
+    payeeTokenBalance = (await mockERC20.balanceOf(payee)).valueOf();
   }
 
   async function advance(intervals) {
     await paymentTerms.setCurrentTimeStamp(intervals);
     await subscription.payCurrentAmountDue();
     await updateState();    
+  }
+
+  function assertState(
+    expectedCredit, 
+    expectedSubscriptionBalance, 
+    expectedPayorBalance, 
+    expectedPayeeBalance //, 
+    //expectedDebt
+  ) {
+    assert.equal(creditBalance, expectedCredit, "Credit balance");
+    assert.equal(subscriptionTokenBalance, expectedSubscriptionBalance, "Subscription balance");
+    assert.equal(payorTokenBalance, expectedPayorBalance, "Payor balance");
+    assert.equal(payeeTokenBalance, expectedPayeeBalance, "Payee balance");
   }
 
 });
