@@ -10,7 +10,7 @@ contract Payable {
     address private _payor;
     address private _pendingPayor;
 
-    event PayorTransferRequested(address indexed requestedPayor);       // change verbiage from "transfer" to "change"?
+    event PayorTransferRequested(address indexed requestedPayor);
     event PayorTransferred(address indexed approvedPayor);
 
     constructor (address payor) internal {
