@@ -9,8 +9,10 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title PaymentProcessor
- * @dev Encapsulates a relationship between a paying party, a recipient, which token 
- * is used as payment, and through what authorized transferer
+ * @dev Encapsulates a relationship between a paying party, a payment recipient, which token 
+ * is used as payment, and through what authorized transferer.  Allows the paying party to debit 
+ * against a virtual credit, against a token balance of this contract's address, and finally against 
+ * the paying party's address.
  */
 contract PaymentProcessor is Payable, Receivable {
 
