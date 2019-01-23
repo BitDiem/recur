@@ -2,9 +2,9 @@ pragma solidity ^0.5.0;
 
 import "./IPaymentObligation.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/ownership/Secondary.sol";
 
-contract PaymentObligation is IPaymentObligation, Ownable {
+contract PaymentObligation is IPaymentObligation, Secondary {
 
     using SafeMath for uint;
 
@@ -21,7 +21,7 @@ contract PaymentObligation is IPaymentObligation, Ownable {
         return _outstandingAmount;
     }
 
-    function markAsPaid(uint amount) public onlyOwner {
+    function markAsPaid(uint amount) public onlyPrimary {
         _setOutstandingAmount(_outstandingAmount.sub(amount));
     }
 
