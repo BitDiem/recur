@@ -1,12 +1,13 @@
 pragma solidity ^0.5.0;
 
 import "../accounts/AuthorizedTokenTransferer.sol";
-import "../terms/SubscriptionRecurringPaymentTerms.sol";
+import "../terms/RecurringPaymentTerms.sol";
 import "../StandardSubscription.sol";
 
 contract SubscriptionFrontEnd is AuthorizedTokenTransferer {
 
     mapping (address => bool) activeSubs;
+    event SubscriptionCreated(address subscriptionAddress, address payor, address payee);
 
     function createFixedRateSubscription(
         address payee,
@@ -21,7 +22,7 @@ contract SubscriptionFrontEnd is AuthorizedTokenTransferer {
         address payor = msg.sender;
         IAuthorizedTokenTransferer authorizedTokenTransferer = this;
 
-        SubscriptionRecurringPaymentTerms paymentTerms = new SubscriptionRecurringPaymentTerms(
+        RecurringPaymentTerms paymentTerms = new RecurringPaymentTerms(
             paymentAmount, 
             interval, 
             delay
@@ -34,8 +35,13 @@ contract SubscriptionFrontEnd is AuthorizedTokenTransferer {
             paymentToken, 
             paymentTerms);
 
-        _whitelistedCallers[address(sub)] = true;
-        return address(sub);
+        address subAddress = address(sub);
+
+        _whitelistedCallers[subAddress] = true;
+
+        emit SubscriptionCreated(subAddress, payor, payee);
+
+        return subAddress;
     }
 
 }
