@@ -30,6 +30,7 @@ contract Balance is Secondary {
     }
 
     function _setVal(uint val) internal {
+        if(_val == val) return;  
         _val = val;
         emit BalanceUpdated(_val);
     }
