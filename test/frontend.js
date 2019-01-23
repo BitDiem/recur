@@ -41,7 +41,7 @@ contract("Testing", accounts => {
             mockERC20.address, 
             paymentTerms.address);
 
-        paymentTerms.transferOwnership(subscription.address);
+        paymentTerms.transferPrimary(subscription.address);
 
         await authorizedTokenTransferer.addToWhitelist(subscription.address);
         await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
