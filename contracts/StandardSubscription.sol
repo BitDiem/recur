@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "./payment/PaymentProcessor.sol";
-import "./terms/IPaymentTerms.sol";
+import "./payment/IPaymentObligation.sol";
 import "./accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
@@ -9,7 +9,7 @@ contract StandardSubscription is PaymentProcessor {
     
     using SafeMath for uint;
 
-    IPaymentTerms private _paymentTerms;
+    IPaymentObligation private _paymentObligation;
 
     event SubscriptionEnded(address endedBy);
 
@@ -18,18 +18,18 @@ contract StandardSubscription is PaymentProcessor {
         address payee,
         IAuthorizedTokenTransferer authorizedTransferer,
         address token,
-        IPaymentTerms paymentTerms
+        IPaymentObligation paymentObligation
     ) 
         PaymentProcessor(payor, payee, authorizedTransferer, token)
         public 
     {
-        _paymentTerms = paymentTerms;
+        _paymentObligation = paymentObligation;
     }
 
     function payCurrentAmountDue() public {
-        uint newAmountDue = _paymentTerms.currentAmountDue();
-        (uint amountPaid,) = pay(newAmountDue);
-        _paymentTerms.markAsPaid(amountPaid);
+        uint amountDue = _paymentObligation.currentAmountDue();
+        (uint amountPaid,) = pay(amountDue);
+        _paymentObligation.markAsPaid(amountPaid);
     }
 
     function endSubscription() public {
