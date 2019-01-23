@@ -3,12 +3,9 @@ pragma solidity ^0.5.0;
 import "./payment/PaymentProcessor.sol";
 import "./payment/IPaymentObligation.sol";
 import "./accounts/IAuthorizedTokenTransferer.sol";
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract StandardSubscription is PaymentProcessor {
     
-    using SafeMath for uint;
-
     IPaymentObligation private _paymentObligation;
 
     event SubscriptionEnded(address endedBy);
