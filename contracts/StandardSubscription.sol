@@ -35,3 +35,31 @@ contract StandardSubscription is PaymentProcessor {
     }
 
 }
+
+contract SafeSubscription is StandardSubscription, IAuthorizedTokenTransferer {
+
+    constructor (
+        address payee,
+        address token,
+        IPaymentObligation paymentObligation
+    ) 
+        StandardSubscription(msg.sender, payee, this, token, paymentObligation)
+        public 
+    {
+    }
+
+    function transfer(
+        address from, 
+        address to, 
+        address token,
+        uint amount
+    ) 
+        public
+    {
+        require (msg.sender == address(this));
+        IERC20 tokenContract = IERC20(token);
+        require (tokenContract.allowance(from, address(this)) >= amount, "Token transfer not authorized");
+        tokenContract.transferFrom(from, to, amount);
+    }
+
+}
