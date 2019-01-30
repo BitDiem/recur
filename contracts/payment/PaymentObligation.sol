@@ -17,7 +17,7 @@ contract PaymentObligation is IPaymentObligation, Secondary {
     }
 
     function currentAmountDue() public returns (uint) {
-        _setOutstandingAmount(_calculateOutstandingAmount());
+        _setOutstandingAmount(_outstandingAmount.add(_calculateOutstandingAmount()));
         return _outstandingAmount;
     }
 
