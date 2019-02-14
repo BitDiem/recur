@@ -146,11 +146,13 @@ contract PaymentProcessor is Payable, PaymentCredit {
         if (amount <= balance) {
             remainder = 0;
             //tokenContract.transfer(to, amount);
+            tokenContract.approve(address(_acceptsPayment), amount);
             _acceptsPayment.receiveToken(address(this), _token, amount);
         }
         else if (amount > balance) {
             remainder = amount - balance;
             //tokenContract.transfer(to, balance);
+            tokenContract.approve(address(_acceptsPayment), balance);
             _acceptsPayment.receiveToken(address(this), _token, balance);
         }
 
