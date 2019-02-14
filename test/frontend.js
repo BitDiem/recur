@@ -119,18 +119,25 @@ contract("Testing", accounts => {
 
   it("should track debt", async () => {    
     await advance(110);
+    printState();
     assertState(0, 0, 0, 100);
 
     await mockERC20.transfer(payor, 15, {from: tokenBank});
+    await updateState();
+    printState();
     // total 115 ever held by payor
 
     await advance(120);
+    printState();
     assertState(0, 0, 0, 115);
 
     await mockERC20.transfer(payor, 20, {from: tokenBank});
+    await updateState();
+    printState();
     // total 135 ever held by payor
 
     await advance(130);
+    printState();
     assertState(0, 0, 5, 130);
   });
 
@@ -158,6 +165,14 @@ contract("Testing", accounts => {
     assert.equal(subscriptionTokenBalance, expectedSubscriptionBalance, "Subscription balance");
     assert.equal(payorTokenBalance, expectedPayorBalance, "Payor balance");
     assert.equal(payeeTokenBalance, expectedPayeeBalance, "Payee balance");
+  }
+
+  function printState() {
+    console.log("Credit balance: ", creditBalance.toString(10));
+    console.log("Subscription balance: ", subscriptionTokenBalance.toString(10));
+    console.log("Payor balance: ", payorTokenBalance.toString(10));
+    console.log("Payee balance: ", payeeTokenBalance.toString(10));
+    console.log("____****_____");
   }
 
 });
