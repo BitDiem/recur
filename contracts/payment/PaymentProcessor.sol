@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "../accounts/Payable.sol";
 import "../accounts/Receivable.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
+import "../accounts/IAcceptsPayment.sol";
 import "../payment/PaymentCredit.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/math/Math.sol";
@@ -15,16 +16,17 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
  * against a virtual credit, against a token balance of this contract's address, and finally against 
  * the paying party's address.
  */
-contract PaymentProcessor is Payable, Receivable, PaymentCredit {
+contract PaymentProcessor is Payable, PaymentCredit {
 
     using SafeMath for uint;
 
-    IAuthorizedTokenTransferer private _authorizedTransferer;
+    address private _transferer;
     address private _token;
+
+    IAcceptsPayment private _acceptsPayment;
 
     event PaymentMade(
         address indexed from, 
-        address indexed to, 
         address indexed token, 
         uint amountPaid, 
         uint remainder
@@ -32,16 +34,16 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit {
 
     constructor (
         address payor,
-        address payee,
-        IAuthorizedTokenTransferer authorizedTransferer,
-        address token
+        address transferer,
+        address token,
+        IAcceptsPayment acceptsPayment
     ) 
         Payable(payor)
-        Receivable(payee)
         internal
     {
-        _authorizedTransferer = authorizedTransferer;
+        _transferer = transferer;
         _token = token;
+        _acceptsPayment = acceptsPayment;
     }
 
     function pay(uint paymentAmount) internal returns (uint amountPaid, uint remainder) {
@@ -54,7 +56,6 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit {
 
         emit PaymentMade(
             getPayor(),
-            getPayee(),
             _token,
             amountPaid, 
             remainder);
@@ -140,16 +141,18 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit {
             return amount;
 
         uint remainder;
-        address to = getPayee();
+        //address to = getPayee();
 
         // the case where there is no remainder
         if (amount <= balance) {
             remainder = 0;
-            tokenContract.transfer(to, amount);
+            //tokenContract.transfer(to, amount);
+            _acceptsPayment.receiveToken(address(this), _token, amount);
         }
         else if (amount > balance) {
             remainder = amount - balance;
-            tokenContract.transfer(to, balance);
+            //tokenContract.transfer(to, balance);
+            _acceptsPayment.receiveToken(address(this), _token, balance);
         }
 
         return remainder;
@@ -167,11 +170,11 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit {
         IERC20 tokenContract = IERC20(_token);
 
         // check how much the transferer is authorized to send on behalf of the payor
-        uint authorizedAmount = tokenContract.allowance(getPayor(), address(_authorizedTransferer));
+        uint authorizedAmount = tokenContract.allowance(getPayor(), _transferer);
         uint availableBalance = tokenContract.balanceOf(getPayor());
         uint amountToPay = Math.min(amount, Math.min(authorizedAmount, availableBalance));
 
-        _authorizedTransferer.transfer(getPayor(), getPayee(), _token, amountToPay);
+        _acceptsPayment.receiveToken(getPayor(), _token, amountToPay);
 
         uint remainder = amount - amountToPay;
         return remainder;

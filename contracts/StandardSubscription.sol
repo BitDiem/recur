@@ -12,12 +12,12 @@ contract StandardSubscription is PaymentProcessor {
 
     constructor (
         address payor,
-        address payee,
-        IAuthorizedTokenTransferer authorizedTransferer,
+        address transferer,
         address token,
-        IPaymentObligation paymentObligation
+        IPaymentObligation paymentObligation,
+        IAcceptsPayment acceptsPayment
     ) 
-        PaymentProcessor(payor, payee, authorizedTransferer, token)
+        PaymentProcessor(payor, transferer, token, acceptsPayment)
         public 
     {
         _paymentObligation = paymentObligation;
@@ -30,13 +30,13 @@ contract StandardSubscription is PaymentProcessor {
     }
 
     function endSubscription() public {
-        require(getPayor() == msg.sender || getPayee() == msg.sender);
+        require(getPayor() == msg.sender /*||  getPayee() == msg.sender */);
         emit SubscriptionEnded(msg.sender);
     }
 
 }
 
-contract SafeSubscription is StandardSubscription, IAuthorizedTokenTransferer {
+/*contract SafeSubscription is StandardSubscription, IAuthorizedTokenTransferer {
 
     constructor (
         address payee,
@@ -62,4 +62,4 @@ contract SafeSubscription is StandardSubscription, IAuthorizedTokenTransferer {
         tokenContract.transferFrom(from, to, amount);
     }
 
-}
+}*/
