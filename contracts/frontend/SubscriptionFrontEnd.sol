@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "../accounts/AuthorizedTokenTransferer.sol";
+import "../accounts/SinglePayee.sol";
 import "../terms/RecurringPaymentTerms.sol";
 import "../StandardSubscription.sol";
 
@@ -28,12 +29,14 @@ contract SubscriptionFrontEnd is AuthorizedTokenTransferer {
             delay
         );
 
+        SinglePayee singlePayee = new SinglePayee(payee, authorizedTokenTransferer);
+
         StandardSubscription sub = new StandardSubscription(
             payor,
-            payee,
-            authorizedTokenTransferer, 
+            address(authorizedTokenTransferer), 
             paymentToken, 
-            paymentTerms);
+            paymentTerms,
+            singlePayee);
 
         address subAddress = address(sub);
 

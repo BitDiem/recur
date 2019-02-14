@@ -4,6 +4,7 @@ const MockERC20 = artifacts.require('MockERC20')
 const MockRecurringPaymentTerms = artifacts.require('MockRecurringPaymentTerms')
 const StandardSubscription = artifacts.require('StandardSubscription')
 const AuthorizedTokenTransferer = artifacts.require('AuthorizedTokenTransferer')
+const SinglePayee = artifacts.require('SinglePayee')
 const assert = require('assert')
 
 function sleep(ms) {
@@ -15,6 +16,7 @@ contract("Testing", accounts => {
     let tokenBank;
     let payor;
     let payee;
+    let singlePayee;
     let mockERC20;
     let paymentTerms;
     let authorizedTokenTransferer;
@@ -34,12 +36,14 @@ contract("Testing", accounts => {
         await mockERC20.transfer(payor, startingTokenBalance, {from: tokenBank});
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
+        singlePayee = await SinglePayee.new(payee, authorizedTokenTransferer.address);
+
         subscription = await StandardSubscription.new(
             payor,
-            payee,
             authorizedTokenTransferer.address, 
             mockERC20.address, 
-            paymentTerms.address);
+            paymentTerms.address,
+            singlePayee.address);
 
         paymentTerms.transferPrimary(subscription.address);
 
