@@ -47,7 +47,8 @@ contract("Testing", accounts => {
 
         paymentTerms.transferPrimary(subscription.address);
 
-        await authorizedTokenTransferer.addToWhitelist(subscription.address);
+        await authorizedTokenTransferer.addToWhitelist(singlePayee.address);
+        //await authorizedTokenTransferer.addToWhitelist(subscription.address);
         await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
       })
 
@@ -59,6 +60,11 @@ contract("Testing", accounts => {
 
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
     assert.equal(payeeTokenBalance, 0, "Unexpected value");
+  });
+
+  it("should pay normally when payor address has a balance", async () => {    
+    await advance(1);
+    assert.equal(payeeTokenBalance, 1, "1 payment");
   });
 
   it("should deduct from credits (2) when available", async () => {    
@@ -162,6 +168,14 @@ contract("Testing", accounts => {
     assert.equal(subscriptionTokenBalance, expectedSubscriptionBalance, "Subscription balance");
     assert.equal(payorTokenBalance, expectedPayorBalance, "Payor balance");
     assert.equal(payeeTokenBalance, expectedPayeeBalance, "Payee balance");
+  }
+
+  function printState() {
+    console.log("Credit balance: ", creditBalance.toString(10));
+    console.log("Subscription balance: ", subscriptionTokenBalance.toString(10));
+    console.log("Payor balance: ", payorTokenBalance.toString(10));
+    console.log("Payee balance: ", payeeTokenBalance.toString(10));
+    console.log("____****_____");
   }
 
 });
