@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0;
 
 import "../accounts/Payable.sol";
-import "../accounts/Receivable.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
 import "../accounts/IAcceptsPayment.sol";
 import "../payment/PaymentCredit.sol";
