@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "../accounts/Payable.sol";
 import "../accounts/Receivable.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
+import "../payment/PaymentCredit.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/math/Math.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -14,15 +15,12 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
  * against a virtual credit, against a token balance of this contract's address, and finally against 
  * the paying party's address.
  */
-contract PaymentProcessor is Payable, Receivable {
+contract PaymentProcessor is Payable, Receivable, PaymentCredit {
 
     using SafeMath for uint;
 
     IAuthorizedTokenTransferer private _authorizedTransferer;
     address private _token;
-
-    uint private _credit;
-    event CreditChanged(uint creditTotal);
 
     event PaymentMade(
         address indexed from, 
@@ -67,25 +65,6 @@ contract PaymentProcessor is Payable, Receivable {
 
 
 
-    /***************  CREDIT FUNCTIONS  ***********/
-
-    function getCredit() public view returns (uint) {
-        return _credit;
-    }
-
-    function addCredit(uint amount) public onlyPayee {
-        require(amount > 0);
-        _setCredit(_credit.add(amount));
-    }
-
-    function removeCredit(uint amount) public onlyPayee {
-        require(amount > 0);
-        _setCredit(_credit.sub(amount));
-    }
-
-
-
-
     /***************  WITHDRAW FUNCTIONS - TOKEN BALANCE ***********/
 
     /**
@@ -114,20 +93,22 @@ contract PaymentProcessor is Payable, Receivable {
         private 
         returns (uint) 
     {
-        if (amount == 0 || _credit == 0)
+        uint credit = getCredit();
+
+        if (amount == 0 || credit == 0)
             return amount;
 
         uint remainder;
 
         // the case where there is no remainder
-        if (amount < _credit) {
+        if (amount < credit) {
             remainder = 0;
-            _setCredit(_credit - amount);
+            _setCredit(credit - amount);
         }
-        else if (amount > _credit) {
+        else if (amount > credit) {
             // we don’t need to transfer tokens from the payee back to itself, 
             // so simply adjusting credit balance is sufficient
-            remainder = amount - _credit;
+            remainder = amount - credit;
             _setCredit(0);
         }
         else {
@@ -197,11 +178,4 @@ contract PaymentProcessor is Payable, Receivable {
     }
     /** end *************  PAYMENT FUNCTIONS (CREDIT, TOKEN BALANCE, AUTHORIZED TRANSFER)  ***********/
 
-
-
-
-    function _setCredit(uint credit) private {
-        _credit = credit;
-        emit CreditChanged(_credit);
-    }
 }

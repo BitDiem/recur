@@ -41,6 +41,9 @@ contract("Testing", accounts => {
             mockERC20.address, 
             paymentTerms.address);
 
+        subscription.addCreditAdmin(payee);
+        subscription.renounceCreditAdmin();
+
         paymentTerms.transferPrimary(subscription.address);
 
         await authorizedTokenTransferer.addToWhitelist(subscription.address);
@@ -119,25 +122,20 @@ contract("Testing", accounts => {
 
   it("should track debt", async () => {    
     await advance(110);
-    printState();
     assertState(0, 0, 0, 100);
 
     await mockERC20.transfer(payor, 15, {from: tokenBank});
     await updateState();
-    printState();
     // total 115 ever held by payor
 
     await advance(120);
-    printState();
     assertState(0, 0, 0, 115);
 
     await mockERC20.transfer(payor, 20, {from: tokenBank});
     await updateState();
-    printState();
     // total 135 ever held by payor
 
     await advance(130);
-    printState();
     assertState(0, 0, 5, 130);
   });
 
