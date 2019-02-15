@@ -82,27 +82,15 @@ contract("Testing", accounts => {
     await mockERC20.transfer(subscription.address, 2, {from: tokenBank});
     await updateState();
     assertState(startingTokenBalance, 0, 0, 2, 0);
-    /*assert.equal(subscriptionTokenBalance, 2, "Unexpected value");
-    assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
-    assert.equal(payeeTokenBalance, 0, "Unexpected value");*/
 
     await advance(1);
     assertState(startingTokenBalance, 1, 0, 1, 0);
-    /*assert.equal(subscriptionTokenBalance, 1, "Unexpected value");
-    assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
-    assert.equal(payeeTokenBalance, 1, "Unexpected value");*/
 
     await advance(2);
     assertState(startingTokenBalance, 2, 0, 0, 0);
-    /*assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
-    assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
-    assert.equal(payeeTokenBalance, 2, "Unexpected value");*/
 
     await advance(3);
     assertState(startingTokenBalance - 1, 3, 0, 0, 0);
-    /*assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
-    assert.equal(payorTokenBalance, startingTokenBalance - 1, "Unexpected value");
-    assert.equal(payeeTokenBalance, 3, "Unexpected value");*/
   });
 
   it("should use all available resources - credits, balance, wallet", async () => {    
