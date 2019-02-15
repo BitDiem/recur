@@ -24,6 +24,7 @@ contract("Testing", accounts => {
     let subscriptionTokenBalance;
     let payorTokenBalance;
     let payeeTokenBalance;
+    let currentDebt;
     const startingTokenBalance = 100;
 
     beforeEach(async function() {   
@@ -80,25 +81,28 @@ contract("Testing", accounts => {
     // transfer a token balance to the subscription
     await mockERC20.transfer(subscription.address, 2, {from: tokenBank});
     await updateState();
-  
-    assert.equal(subscriptionTokenBalance, 2, "Unexpected value");
+    assertState(startingTokenBalance, 0, 0, 2, 0);
+    /*assert.equal(subscriptionTokenBalance, 2, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
-    assert.equal(payeeTokenBalance, 0, "Unexpected value");
+    assert.equal(payeeTokenBalance, 0, "Unexpected value");*/
 
     await advance(1);
-    assert.equal(subscriptionTokenBalance, 1, "Unexpected value");
+    assertState(startingTokenBalance, 1, 0, 1, 0);
+    /*assert.equal(subscriptionTokenBalance, 1, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
-    assert.equal(payeeTokenBalance, 1, "Unexpected value");
+    assert.equal(payeeTokenBalance, 1, "Unexpected value");*/
 
     await advance(2);
-    assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
+    assertState(startingTokenBalance, 2, 0, 0, 0);
+    /*assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
-    assert.equal(payeeTokenBalance, 2, "Unexpected value");
+    assert.equal(payeeTokenBalance, 2, "Unexpected value");*/
 
     await advance(3);
-    assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
+    assertState(startingTokenBalance - 1, 3, 0, 0, 0);
+    /*assert.equal(subscriptionTokenBalance, 0, "Unexpected value");
     assert.equal(payorTokenBalance, startingTokenBalance - 1, "Unexpected value");
-    assert.equal(payeeTokenBalance, 3, "Unexpected value");
+    assert.equal(payeeTokenBalance, 3, "Unexpected value");*/
   });
 
   it("should use all available resources - credits, balance, wallet", async () => {    
@@ -122,21 +126,23 @@ contract("Testing", accounts => {
 
   it("should track debt", async () => {    
     await advance(110);
-    assertState(0, 0, 0, 100);
+    assertState(0, 100, 0, 0, 10);
 
     await mockERC20.transfer(payor, 15, {from: tokenBank});
     await updateState();
+    assertState(15, 100, 0, 0, 10);
     // total 115 ever held by payor
 
     await advance(120);
-    assertState(0, 0, 0, 115);
+    assertState(0, 115, 0, 0, 5);
 
     await mockERC20.transfer(payor, 20, {from: tokenBank});
     await updateState();
+    assertState(20, 115, 0, 0, 5);
     // total 135 ever held by payor
 
     await advance(130);
-    assertState(0, 0, 5, 130);
+    assertState(5, 130, 0, 0, 0);
   });
 
   async function updateState() {
@@ -144,6 +150,7 @@ contract("Testing", accounts => {
     subscriptionTokenBalance = (await mockERC20.balanceOf(subscription.address)).valueOf();
     payorTokenBalance = (await mockERC20.balanceOf(payor)).valueOf();
     payeeTokenBalance = (await mockERC20.balanceOf(payee)).valueOf();
+    currentDebt = (await paymentTerms.outstandingAmount()).valueOf();
   }
 
   async function advance(intervals) {
@@ -153,23 +160,25 @@ contract("Testing", accounts => {
   }
 
   function assertState(
-    expectedCredit, 
-    expectedSubscriptionBalance, 
-    expectedPayorBalance, 
-    expectedPayeeBalance //, 
-    //expectedDebt
+    expectedPayorBalance,
+    expectedPayeeBalance,
+    expectedCredit,
+    expectedSubscriptionBalance,
+    expectedDebt
   ) {
-    assert.equal(creditBalance, expectedCredit, "Credit balance");
-    assert.equal(subscriptionTokenBalance, expectedSubscriptionBalance, "Subscription balance");
     assert.equal(payorTokenBalance, expectedPayorBalance, "Payor balance");
     assert.equal(payeeTokenBalance, expectedPayeeBalance, "Payee balance");
+    assert.equal(creditBalance, expectedCredit, "Credit balance");
+    assert.equal(subscriptionTokenBalance, expectedSubscriptionBalance, "Subscription balance");
+    assert.equal(currentDebt, expectedDebt, "Subscription debt");
   }
 
   function printState() {
-    console.log("Credit balance: ", creditBalance.toString(10));
-    console.log("Subscription balance: ", subscriptionTokenBalance.toString(10));
     console.log("Payor balance: ", payorTokenBalance.toString(10));
     console.log("Payee balance: ", payeeTokenBalance.toString(10));
+    console.log("Credit balance: ", creditBalance.toString(10));
+    console.log("Subscription balance: ", subscriptionTokenBalance.toString(10));
+    console.log("Subscription debt: ", currentDebt.toString(10));
     console.log("____****_____");
   }
 
