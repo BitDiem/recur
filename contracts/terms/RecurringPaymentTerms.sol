@@ -43,7 +43,7 @@ contract RecurringPaymentTerms is PaymentObligation {
 
         _lastIntervalTime = currentTime - mod;
         _outstandingIntervals = _outstandingIntervals + div;
-        uint outstandingAmount = outstandingAmount() + paymentAmount;
+        uint outstandingAmount = paymentAmount;
 
         emit RecurringPaymentsElapsed(
             outstandingAmount, 
