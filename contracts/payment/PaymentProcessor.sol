@@ -4,6 +4,7 @@ import "../accounts/Payable.sol";
 import "../accounts/Receivable.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
 import "../payment/PaymentCredit.sol";
+import "../payment/TokenEscrow.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/math/Math.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -15,7 +16,7 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
  * against a virtual credit, against a token balance of this contract's address, and finally against 
  * the paying party's address.
  */
-contract PaymentProcessor is Payable, Receivable, PaymentCredit {
+contract PaymentProcessor is Payable, Receivable, PaymentCredit, TokenEscrow {
 
     using SafeMath for uint;
 
@@ -60,23 +61,6 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit {
             remainder);
         
         return (amountPaid, remainder);
-    }
-
-
-
-
-    /***************  WITHDRAW FUNCTIONS - TOKEN BALANCE ***********/
-
-    /**
-     * @dev Allows the payor to transfer any erc20 token held in this contract.
-     * @param token The address of the ERC20 token to withdraw
-     * @param amount The balance amount to withdraw
-     */
-    function transferTokenTo(address to, address token, uint amount) public onlyPayor {
-        require(amount > 0);
-        require(token != address(0));
-        IERC20 tokenContract = IERC20(token);
-        tokenContract.transfer(to, amount);
     }
 
 
