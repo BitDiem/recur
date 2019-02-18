@@ -4,6 +4,4 @@ interface IPaymentObligation {
 
     function currentAmountDue() external returns (uint);
 
-    function markAsPaid(uint amount) external;
-
 }
