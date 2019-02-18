@@ -133,18 +133,21 @@ contract("Testing", accounts => {
     assertState(5, 130, 0, 0, 0);
   });
 
-  async function updateState() {
-    creditBalance = (await subscription.getCredit()).valueOf();
-    subscriptionTokenBalance = (await mockERC20.balanceOf(subscription.address)).valueOf();
-    payorTokenBalance = (await mockERC20.balanceOf(payor)).valueOf();
-    payeeTokenBalance = (await mockERC20.balanceOf(payee)).valueOf();
-    currentDebt = (await paymentTerms.outstandingAmount()).valueOf();
-  }
+
+
 
   async function advance(intervals) {
     await paymentTerms.setCurrentTimeStamp(intervals);
     await subscription.payCurrentAmountDue();
     await updateState();    
+  }
+
+  async function updateState() {
+    creditBalance = (await subscription.getCredit()).valueOf();
+    subscriptionTokenBalance = (await mockERC20.balanceOf(subscription.address)).valueOf();
+    payorTokenBalance = (await mockERC20.balanceOf(payor)).valueOf();
+    payeeTokenBalance = (await mockERC20.balanceOf(payee)).valueOf();
+    currentDebt = (await subscription.getOutstandingAmount()).valueOf();
   }
 
   function assertState(
