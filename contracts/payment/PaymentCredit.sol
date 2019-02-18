@@ -30,6 +30,7 @@ contract PaymentCredit is CreditAdminRole {
     }
 
     function _setCredit(uint credit) internal {
+        if(_credit == credit) return;
         _credit = credit;
         emit CreditChanged(_credit);
     }
