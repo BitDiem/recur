@@ -1,12 +1,13 @@
 pragma solidity ^0.5.0;
 
 import "./payment/PaymentProcessor.sol";
-import "./payment/IPaymentObligation.sol";
+import "./payment/PaymentObligation.sol";
+import "./payment/PaymentDebt.sol";
 import "./accounts/IAuthorizedTokenTransferer.sol";
 
-contract StandardSubscription is PaymentProcessor {
+contract StandardSubscription is PaymentProcessor, PaymentDebt {
     
-    IPaymentObligation private _paymentObligation;
+    PaymentObligation private _paymentObligation;
 
     event SubscriptionEnded(address endedBy);
 
@@ -15,7 +16,7 @@ contract StandardSubscription is PaymentProcessor {
         address payee,
         IAuthorizedTokenTransferer authorizedTransferer,
         address token,
-        IPaymentObligation paymentObligation
+        PaymentObligation paymentObligation
     ) 
         PaymentProcessor(payor, payee, authorizedTransferer, token)
         public 
@@ -24,42 +25,14 @@ contract StandardSubscription is PaymentProcessor {
     }
 
     function payCurrentAmountDue() public {
-        uint amountDue = _paymentObligation.currentAmountDue();
-        (uint amountPaid,) = pay(amountDue);
-        _paymentObligation.markAsPaid(amountPaid);
+        uint amountDue = _paymentObligation.currentAmountDue() + getOutstandingAmount();
+        (, uint remainder) = pay(amountDue);
+        _setOutstandingAmount(remainder);
     }
 
     function endSubscription() public {
         require(getPayor() == msg.sender || getPayee() == msg.sender);
         emit SubscriptionEnded(msg.sender);
-    }
-
-}
-
-contract SafeSubscription is StandardSubscription, IAuthorizedTokenTransferer {
-
-    constructor (
-        address payee,
-        address token,
-        IPaymentObligation paymentObligation
-    ) 
-        StandardSubscription(msg.sender, payee, this, token, paymentObligation)
-        public 
-    {
-    }
-
-    function transfer(
-        address from, 
-        address to, 
-        address token,
-        uint amount
-    ) 
-        public
-    {
-        require (msg.sender == address(this));
-        IERC20 tokenContract = IERC20(token);
-        require (tokenContract.allowance(from, address(this)) >= amount, "Token transfer not authorized");
-        tokenContract.transferFrom(from, to, amount);
     }
 
 }
