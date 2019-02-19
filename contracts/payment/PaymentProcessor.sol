@@ -4,7 +4,7 @@ import "../accounts/Payable.sol";
 import "../accounts/Receivable.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
 import "../payment/PaymentCredit.sol";
-import "../payment/TokenEscrow.sol";
+import "../payment/escrow/TokenEscrow.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/math/Math.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -45,13 +45,13 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit, TokenEscrow {
         _token = token;
     }
 
-    function pay(uint paymentAmount) internal returns (uint amountPaid, uint remainder) {
+    function pay(uint paymentAmount) internal returns (uint remainder) {
         remainder = paymentAmount;
         remainder = _payFromCredit(remainder);
         remainder = _payFromTokenBalance(remainder);
         remainder = _payFromAuthorizedTransferer(remainder);
 
-        amountPaid = paymentAmount - remainder;
+        uint amountPaid = paymentAmount - remainder;
 
         emit PaymentMade(
             getPayor(),
@@ -60,7 +60,7 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit, TokenEscrow {
             amountPaid, 
             remainder);
         
-        return (amountPaid, remainder);
+        return remainder;
     }
 
 
