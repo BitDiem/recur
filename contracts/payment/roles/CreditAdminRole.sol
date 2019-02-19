@@ -20,7 +20,7 @@ contract CreditAdminRole {
     }
 
     modifier onlyCreditAdmin() {
-        require(isCreditAdmin(msg.sender), "Only credit admins may call");
+        require(isCreditAdmin(msg.sender), "Only credit admins can call function");
         _;
     }
 
