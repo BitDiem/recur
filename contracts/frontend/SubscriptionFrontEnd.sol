@@ -34,7 +34,10 @@ contract SubscriptionFrontEnd {
             delay
         );
 
-        return createSubscription(payee, paymentToken, paymentTerms);
+        address subscriptionAddress = createSubscription(payee, paymentToken, paymentTerms);
+        paymentTerms.transferPrimary(subscriptionAddress);
+
+        return subscriptionAddress;
     }
 
     function createSubscription(
@@ -61,7 +64,6 @@ contract SubscriptionFrontEnd {
         subscription.renounceTokenWithdrawer();
 
         address subscriptionAddress = address(subscription);
-        paymentTerms.transferPrimary(subscriptionAddress);
         _tokenTransferer.addToWhitelist(subscriptionAddress);
 
         emit SubscriptionCreated(subscriptionAddress, payor, payee);

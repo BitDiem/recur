@@ -5,10 +5,6 @@ const SubscriptionFrontEnd = artifacts.require('SubscriptionFrontEnd')
 const AuthorizedTokenTransferer = artifacts.require('AuthorizedTokenTransferer')
 const assert = require('assert')
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
 contract("FrontEnd Test", accounts => {
 
     let tokenBank;
@@ -33,17 +29,25 @@ contract("FrontEnd Test", accounts => {
         payee = accounts[2];
         mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", tokenBank, startingTokenBalance * 100);
         await mockERC20.transfer(payor, startingTokenBalance, {from: tokenBank});
+
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
         subscriptionFrontEnd = await SubscriptionFrontEnd.new(authorizedTokenTransferer.address);
-        await authorizedTokenTransferer.transferPrimary(subscriptionFrontEnd.address);
+        await authorizedTokenTransferer.transferOwnership(subscriptionFrontEnd.address);
 
-        subscription = await subscriptionFrontEnd.createSubscription(
+        //subscriptionFrontEnd = await SubscriptionFrontEnd.new("0x0000000000000000000000000000000000000000");
+
+        let transaction = await subscriptionFrontEnd.createSubscription(
           payee,
           mockERC20.address,
           paymentTerms.address
         );
 
+        let log = transaction.logs[0];
+        let subscriptionAddress = log.args.subscriptionAddress;
+        subscription = await StandardSubscription.at(subscriptionAddress);
+
+        await paymentTerms.transferPrimary(subscription.address);
         await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
       })
 
