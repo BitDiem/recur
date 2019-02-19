@@ -28,13 +28,24 @@ contract SubscriptionFrontEnd {
         public
         returns (address)
     {
-        address payor = msg.sender;
-
         RecurringPaymentTerms paymentTerms = new RecurringPaymentTerms(
             paymentAmount, 
             interval, 
             delay
         );
+
+        return createSubscription(payee, paymentToken, paymentTerms);
+    }
+
+    function createSubscription(
+        address payee,
+        address paymentToken, 
+        PaymentObligation paymentTerms
+    )
+        public
+        returns (address)
+    {
+        address payor = msg.sender;
 
         StandardSubscription subscription = new StandardSubscription(
             payor,
