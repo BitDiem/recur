@@ -52,8 +52,8 @@ contract("Testing", accounts => {
       })
 
   it("should not pay when no time has transpired", async () => {  
-    await subscription.payCurrentAmountDue();
-    await subscription.payCurrentAmountDue();
+    await subscription.payFullAmountDue();
+    await subscription.payFullAmountDue();
 
     await updateState();
 
@@ -138,7 +138,7 @@ contract("Testing", accounts => {
 
   async function advance(intervals) {
     await paymentTerms.setCurrentTimeStamp(intervals);
-    await subscription.payCurrentAmountDue();
+    await subscription.payFullAmountDue();
     await updateState();    
   }
 
