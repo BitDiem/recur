@@ -4,7 +4,8 @@ import "../accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
-contract AuthorizedTokenTransferer is IAuthorizedTokenTransferer, Ownable {
+contract AuthorizedTokenTransferer is IAuthorizedTokenTransferer, Ownable { 
+    // TODO: this might need to be a whitelistedadmin type implementation - otherwise only one frontend could add at a time
 
     mapping(address => bool) _whitelistedCallers;
 
