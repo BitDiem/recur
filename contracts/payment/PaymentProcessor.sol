@@ -143,7 +143,7 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit, TokenEscrow {
         uint amount
     )
         private
-        returns (uint) 
+        returns (uint remainder) 
     {
         if (amount == 0)
             return amount;
@@ -155,9 +155,13 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit, TokenEscrow {
         uint availableBalance = tokenContract.balanceOf(getPayor());
         uint amountToPay = Math.min(amount, Math.min(authorizedAmount, availableBalance));
 
-        _authorizedTransferer.transfer(getPayor(), getPayee(), _token, amountToPay);
+        if (amountToPay > 0) {
+            _authorizedTransferer.transfer(getPayor(), getPayee(), _token, amountToPay);
+            remainder = amount - amountToPay;
+        } else {
+            remainder = amount;
+        }
 
-        uint remainder = amount - amountToPay;
         return remainder;
     }
     /** end *************  PAYMENT FUNCTIONS (CREDIT, TOKEN BALANCE, AUTHORIZED TRANSFER)  ***********/
