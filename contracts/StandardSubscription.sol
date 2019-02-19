@@ -24,9 +24,9 @@ contract StandardSubscription is PaymentProcessor, PaymentDebt {
         _paymentObligation = paymentObligation;
     }
 
-    function payCurrentAmountDue() public {
+    function payFullAmountDue() public {
         uint amountDue = _paymentObligation.currentAmountDue() + getOutstandingAmount();
-        (, uint remainder) = pay(amountDue);
+        uint remainder = pay(amountDue);
         _setOutstandingAmount(remainder);
     }
 
