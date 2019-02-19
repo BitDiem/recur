@@ -1,5 +1,3 @@
-//const MetaCoin = artifacts.require("MetaCoin");
-
 const MockERC20 = artifacts.require('MockERC20')
 const MockRecurringPaymentTerms = artifacts.require('MockRecurringPaymentTerms')
 const StandardSubscription = artifacts.require('StandardSubscription')
@@ -10,7 +8,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-contract("Testing", accounts => {
+contract("Subscription Test", accounts => {
 
     let tokenBank;
     let payor;
@@ -42,10 +40,10 @@ contract("Testing", accounts => {
             mockERC20.address, 
             paymentTerms.address);
 
-        subscription.addCreditAdmin(payee);
-        subscription.renounceCreditAdmin();
+        await subscription.addCreditAdmin(payee);
+        await subscription.renounceCreditAdmin();
 
-        paymentTerms.transferPrimary(subscription.address);
+        await paymentTerms.transferPrimary(subscription.address);
 
         await authorizedTokenTransferer.addToWhitelist(subscription.address);
         await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
