@@ -4,12 +4,21 @@ import "../accounts/AuthorizedTokenTransferer.sol";
 import "../terms/RecurringPaymentTerms.sol";
 import "../StandardSubscription.sol";
 
-contract SubscriptionFrontEnd is AuthorizedTokenTransferer {
+contract SubscriptionFrontEnd {
 
-    mapping (address => bool) activeSubs;
+    AuthorizedTokenTransferer _tokenTransferer;
+
+    constructor (AuthorizedTokenTransferer tokenTransferer) public {
+        if (address(tokenTransferer) == address(0)) {
+            _tokenTransferer = new AuthorizedTokenTransferer();
+        } else {
+            _tokenTransferer = tokenTransferer;
+        }
+    }
+
     event SubscriptionCreated(address subscriptionAddress, address payor, address payee);
 
-    function createFixedRateSubscription(
+    function createFixedPeriodSubscription(
         address payee,
         address paymentToken, 
         uint paymentAmount,
@@ -20,7 +29,6 @@ contract SubscriptionFrontEnd is AuthorizedTokenTransferer {
         returns (address)
     {
         address payor = msg.sender;
-        IAuthorizedTokenTransferer authorizedTokenTransferer = this;
 
         RecurringPaymentTerms paymentTerms = new RecurringPaymentTerms(
             paymentAmount, 
@@ -28,20 +36,26 @@ contract SubscriptionFrontEnd is AuthorizedTokenTransferer {
             delay
         );
 
-        StandardSubscription sub = new StandardSubscription(
+        StandardSubscription subscription = new StandardSubscription(
             payor,
             payee,
-            authorizedTokenTransferer, 
+            _tokenTransferer, 
             paymentToken, 
             paymentTerms);
 
-        address subAddress = address(sub);
+        subscription.addCreditAdmin(payee);
+        subscription.renounceCreditAdmin();
 
-        _whitelistedCallers[subAddress] = true;
+        subscription.addTokenWithdrawer(payor);
+        subscription.renounceTokenWithdrawer();
 
-        emit SubscriptionCreated(subAddress, payor, payee);
+        address subscriptionAddress = address(subscription);
+        paymentTerms.transferPrimary(subscriptionAddress);
+        _tokenTransferer.addToWhitelist(subscriptionAddress);
 
-        return subAddress;
+        emit SubscriptionCreated(subscriptionAddress, payor, payee);
+
+        return subscriptionAddress;
     }
 
 }
