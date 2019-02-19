@@ -33,7 +33,7 @@ contract("FrontEnd Test", accounts => {
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
         subscriptionFrontEnd = await SubscriptionFrontEnd.new(authorizedTokenTransferer.address);
-        await authorizedTokenTransferer.transferOwnership(subscriptionFrontEnd.address);
+        await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFrontEnd.address);
 
         //subscriptionFrontEnd = await SubscriptionFrontEnd.new("0x0000000000000000000000000000000000000000");
 
@@ -49,32 +49,39 @@ contract("FrontEnd Test", accounts => {
 
         await paymentTerms.transferPrimary(subscription.address);
         await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
+
+        /*let realTransferer = (await subscriptionFrontEnd.getTokenTransferer()).valueOf();
+        assert.equal(authorizedTokenTransferer.address, realTransferer, "transferers should be the same");
+
+        let authorizedAmount = (await mockERC20.allowance(payor, realTransferer)).valueOf();
+        let availableBalance = (await mockERC20.balanceOf(payor)).valueOf();
+        console.log("authorizedAmount: ", authorizedAmount.toString(10));
+        console.log("availableBalance: ", availableBalance.toString(10));*/
       })
 
   it("should not pay when no time has transpired", async () => {  
     await subscription.payFullAmountDue();
     await subscription.payFullAmountDue();
-
     await updateState();
-
-    assert.equal(payorTokenBalance, startingTokenBalance, "Unexpected value");
-    assert.equal(payeeTokenBalance, 0, "Unexpected value");
+    assertState(startingTokenBalance, 0, 0, 0, 0);
   });
 
-  it("should deduct from credits (2) when available", async () => {    
+  it("should pay normally when payor address has a balance", async () => {    
+    await advance(7);
+    assertState(startingTokenBalance - 7, 7, 0, 0, 0);
+  });
+
+  it("should deduct from credits when available", async () => {    
     // add 2 credits to the subscription
     await subscription.addCredit(2, {from: payee});
     await updateState();
-    assert.equal(creditBalance, 2, "2 credits");
+    assertState(startingTokenBalance, 0, 2, 0, 0);
 
     await advance(1);
-    assert.equal(creditBalance, 1, "1 credits");
+    assertState(startingTokenBalance, 0, 1, 0, 0);
 
     await advance(2);
-    assert.equal(creditBalance, 0, "0 credits");
-
-    await advance(3);
-    assert.equal(creditBalance, 0, "0 credits");
+    assertState(startingTokenBalance, 0, 0, 0, 0);
   });
 
   it("should deduct from subscription wallet token balance when available", async () => {    
@@ -88,9 +95,6 @@ contract("FrontEnd Test", accounts => {
 
     await advance(2);
     assertState(startingTokenBalance, 2, 0, 0, 0);
-
-    await advance(3);
-    assertState(startingTokenBalance - 1, 3, 0, 0, 0);
   });
 
   it("should use all available resources - credits, balance, wallet", async () => {    
