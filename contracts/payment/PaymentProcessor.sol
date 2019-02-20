@@ -3,10 +3,10 @@ pragma solidity ^0.5.0;
 import "../accounts/Payable.sol";
 import "../accounts/Receivable.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
-import "../payment/PaymentCredit.sol";
-import "../payment/escrow/TokenEscrow.sol";
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "openzeppelin-solidity/contracts/math/Math.sol";
+import "../payment/PayFromCredit.sol";
+import "../payment/PayFromContract.sol";
+import "../payment/PayFromAddress.sol";
+//import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
@@ -16,26 +16,26 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
  * against a virtual credit, against a token balance of this contract's address, and finally against 
  * the paying party's address.
  */
-contract PaymentProcessor is Payable, Receivable, PaymentCredit, TokenEscrow {
+contract PaymentProcessor is 
+    Payable, 
+    Receivable, 
+    PayFromCredit, 
+    PayFromContract,
+    PayFromAddress
+{
 
-    using SafeMath for uint;
+    //using SafeMath for uint;
 
     IAuthorizedTokenTransferer private _authorizedTransferer;
-    address private _token;
+    IERC20 private _token;
 
-    event PaymentMade(
-        address indexed from, 
-        address indexed to, 
-        address indexed token, 
-        uint amountPaid, 
-        uint remainder
-    );
+    event PaymentProcessed(uint totalPaid, uint remainder);
 
     constructor (
         address payor,
         address payee,
         IAuthorizedTokenTransferer authorizedTransferer,
-        address token
+        IERC20 token
     ) 
         Payable(payor)
         Receivable(payee)
@@ -53,117 +53,17 @@ contract PaymentProcessor is Payable, Receivable, PaymentCredit, TokenEscrow {
 
         uint amountPaid = paymentAmount - remainder;
 
-        emit PaymentMade(
-            getPayor(),
-            getPayee(),
-            _token,
-            amountPaid, 
-            remainder);
+        emit PaymentProcessed(amountPaid, remainder);
         
         return remainder;
     }
 
-
-
-
-    /***************  PAYMENT FUNCTIONS (CREDIT, TOKEN BALANCE, AUTHORIZED TRANSFER)  ***********/
-
-    /**
-     * @dev Gives the payor a mechanism to pay their debit against the virtual credit issued by the payee.
-     */
-    function _payFromCredit(
-        uint amount
-    ) 
-        private 
-        returns (uint) 
-    {
-        uint credit = getCredit();
-
-        if (amount == 0 || credit == 0)
-            return amount;
-
-        uint remainder;
-
-        // the case where there is no remainder
-        if (amount < credit) {
-            remainder = 0;
-            _setCredit(credit - amount);
-        }
-        else if (amount > credit) {
-            // we don’t need to transfer tokens from the payee back to itself, 
-            // so simply adjusting credit balance is sufficient
-            remainder = amount - credit;
-            _setCredit(0);
-        }
-        else {
-            remainder = 0;
-            _setCredit(0);
-        }
-        return remainder;
+    function _payFromTokenBalance(uint amount) private returns (uint) {
+        return _payFromTokenBalance(getPayee(), _token, amount);
     }
 
-    /**
-     * @dev Anyone can transfer a token balance to this contract.  This function gives the payor 
-     * a mechanism to pay their debit against their token balance.  The supported scenario is:
-     * Payee transfers an amount of token as a refund, promotion, coupon, credit, etc.  This contract 
-     * holds that token in escrow, only withdrawable by the payor.
-     */
-    function _payFromTokenBalance(
-        uint amount
-    ) 
-        private 
-        returns (uint) 
-    {
-        if (amount == 0)
-            return amount;
-
-        IERC20 tokenContract = IERC20(_token);
-        uint balance = tokenContract.balanceOf(address(this));
-
-        if (balance == 0)
-            return amount;
-
-        uint remainder;
-        address to = getPayee();
-
-        // the case where there is no remainder
-        if (amount <= balance) {
-            remainder = 0;
-            tokenContract.transfer(to, amount);
-        }
-        else if (amount > balance) {
-            remainder = amount - balance;
-            tokenContract.transfer(to, balance);
-        }
-
-        return remainder;
+    function _payFromAuthorizedTransferer(uint amount) private returns (uint) {
+        return _payFromAddress(getPayor(), getPayee(), _token, amount, _authorizedTransferer);
     }
-
-    function _payFromAuthorizedTransferer(
-        uint amount
-    )
-        private
-        returns (uint remainder) 
-    {
-        if (amount == 0)
-            return amount;
-
-        IERC20 tokenContract = IERC20(_token);
-
-        // check how much the transferer is authorized to send on behalf of the payor
-        uint authorizedAmount = tokenContract.allowance(getPayor(), address(_authorizedTransferer));
-        uint availableBalance = tokenContract.balanceOf(getPayor());
-        uint amountToPay = Math.min(amount, Math.min(authorizedAmount, availableBalance));
-
-        if (amountToPay > 0) {
-            _authorizedTransferer.transfer(getPayor(), getPayee(), _token, amountToPay);
-            remainder = amount - amountToPay;
-        } else {
-            remainder = amount;
-        }
-
-        return remainder;
-    }
-    /** end *************  PAYMENT FUNCTIONS (CREDIT, TOKEN BALANCE, AUTHORIZED TRANSFER)  ***********/
 
 }
