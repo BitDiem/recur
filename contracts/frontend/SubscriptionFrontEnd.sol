@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "../accounts/AuthorizedTokenTransferer.sol";
 import "../terms/RecurringPaymentTerms.sol";
 import "../StandardSubscription.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 contract SubscriptionFrontEnd {
 
@@ -24,7 +25,7 @@ contract SubscriptionFrontEnd {
 
     function createFixedPeriodSubscription(
         address payee,
-        address paymentToken, 
+        IERC20 paymentToken, 
         uint paymentAmount,
         uint interval,
         uint delay
@@ -46,7 +47,7 @@ contract SubscriptionFrontEnd {
 
     function createSubscription(
         address payee,
-        address paymentToken, 
+        IERC20 paymentToken, 
         PaymentObligation paymentTerms
     )
         public

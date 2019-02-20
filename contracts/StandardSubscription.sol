@@ -3,9 +3,11 @@ pragma solidity ^0.5.0;
 import "./payment/PaymentProcessor.sol";
 import "./payment/PaymentObligation.sol";
 import "./payment/PaymentDebt.sol";
+import "./payment/escrow/TokenEscrow.sol";
 import "./accounts/IAuthorizedTokenTransferer.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
-contract StandardSubscription is PaymentProcessor, PaymentDebt {
+contract StandardSubscription is PaymentProcessor, PaymentDebt, TokenEscrow {
     
     PaymentObligation private _paymentObligation;
 
@@ -15,7 +17,7 @@ contract StandardSubscription is PaymentProcessor, PaymentDebt {
         address payor,
         address payee,
         IAuthorizedTokenTransferer authorizedTransferer,
-        address token,
+        IERC20 token,
         PaymentObligation paymentObligation
     ) 
         PaymentProcessor(payor, payee, authorizedTransferer, token)
