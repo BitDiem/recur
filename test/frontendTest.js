@@ -94,20 +94,14 @@ contract("FrontEnd Test", accounts => {
   it("should use all available resources - credits, balance, wallet", async () => {    
     // transfer a token balance to the subscription
     await mockERC20.transfer(subscription.address, 2, {from: tokenBank});
-
     // add credits
     await subscription.addCredit(2, {from: payee});
-
     await advance(20);
 
-    assert.equal(creditBalance, 0, "Credit");
-    assert.equal(subscriptionTokenBalance, 0, "Subscription balance");
-
-    // starting balance - 20 - 4 (2 credits and 2 from subscription balance)
-    assert.equal(payorTokenBalance, startingTokenBalance - 16, "Payor balance");
-
-    // 20 less 2 credits, which are always virtual
-    assert.equal(payeeTokenBalance, 18, "Payee balance");
+    // payor: starting balance - 20 - 4 (2 credits and 2 from subscription balance)
+    // payee: 20 less 2 credits, which are always virtual
+    assertState(startingTokenBalance - 16, 18, 0, 0, 0)
+    //assertState(99, 99, 99, 99, 99); //trigger fail on purpose to see all events fired
   });
 
   it("should track debt", async () => {    
