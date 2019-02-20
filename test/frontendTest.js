@@ -27,7 +27,10 @@ contract("FrontEnd Test", accounts => {
         tokenBank = accounts[0];
         payor = accounts[1];
         payee = accounts[2];
-        mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", tokenBank, startingTokenBalance * 100);
+        //console.log("Payor address: ", payor);
+        //console.log("Payee address: ", payee);
+
+        mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", tokenBank, startingTokenBalance * 2);
         await mockERC20.transfer(payor, startingTokenBalance, {from: tokenBank});
 
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
@@ -35,12 +38,11 @@ contract("FrontEnd Test", accounts => {
         subscriptionFrontEnd = await SubscriptionFrontEnd.new(authorizedTokenTransferer.address);
         await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFrontEnd.address);
 
-        //subscriptionFrontEnd = await SubscriptionFrontEnd.new("0x0000000000000000000000000000000000000000");
-
         let transaction = await subscriptionFrontEnd.createSubscription(
           payee,
           mockERC20.address,
-          paymentTerms.address
+          paymentTerms.address,
+          {from: payor}
         );
 
         let log = transaction.logs[0];
@@ -49,14 +51,6 @@ contract("FrontEnd Test", accounts => {
 
         await paymentTerms.transferPrimary(subscription.address);
         await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
-
-        /*let realTransferer = (await subscriptionFrontEnd.getTokenTransferer()).valueOf();
-        assert.equal(authorizedTokenTransferer.address, realTransferer, "transferers should be the same");
-
-        let authorizedAmount = (await mockERC20.allowance(payor, realTransferer)).valueOf();
-        let availableBalance = (await mockERC20.balanceOf(payor)).valueOf();
-        console.log("authorizedAmount: ", authorizedAmount.toString(10));
-        console.log("availableBalance: ", availableBalance.toString(10));*/
       })
 
   it("should not pay when no time has transpired", async () => {  

@@ -6,7 +6,7 @@ import "../StandardSubscription.sol";
 
 contract SubscriptionFrontEnd {
 
-    AuthorizedTokenTransferer _tokenTransferer;
+    AuthorizedTokenTransferer private _tokenTransferer;
 
     constructor (AuthorizedTokenTransferer tokenTransferer) public {
         if (address(tokenTransferer) == address(0)) {
@@ -17,6 +17,10 @@ contract SubscriptionFrontEnd {
     }
 
     event SubscriptionCreated(address subscriptionAddress, address payor, address payee);
+
+    function getTokenTransferer() public view returns (AuthorizedTokenTransferer) {
+        return _tokenTransferer;
+    }
 
     function createFixedPeriodSubscription(
         address payee,
@@ -64,7 +68,7 @@ contract SubscriptionFrontEnd {
         subscription.renounceTokenWithdrawer();
 
         address subscriptionAddress = address(subscription);
-        _tokenTransferer.addToWhitelist(subscriptionAddress);
+        _tokenTransferer.addWhitelisted(subscriptionAddress);
 
         emit SubscriptionCreated(subscriptionAddress, payor, payee);
 
