@@ -20,7 +20,7 @@ contract TokenWithdrawerRole {
     }
 
     modifier onlyTokenWithdrawer() {
-        require(isTokenWithdrawer(msg.sender), "Only token withdrawers can call function");
+        require(isTokenWithdrawer(msg.sender));
         _;
     }
 
