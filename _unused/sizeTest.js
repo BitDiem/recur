@@ -1,7 +1,7 @@
 const MockERC20 = artifacts.require('MockERC20')
 const MockRecurringPaymentTerms = artifacts.require('MockRecurringPaymentTerms')
 const StandardSubscription = artifacts.require('StandardSubscription')
-const SubscriptionFrontEnd = artifacts.require('SubscriptionFrontEnd')
+const SubscriptionFactory = artifacts.require('SubscriptionFactory')
 const AuthorizedTokenTransferer = artifacts.require('AuthorizedTokenTransferer')
 
 contract('Sizing', function(accounts) {
@@ -13,10 +13,10 @@ contract('Sizing', function(accounts) {
     mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", 1);
     paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
     authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
-    subscriptionFrontEnd = await SubscriptionFrontEnd.new(authorizedTokenTransferer.address);
-    await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFrontEnd.address);
+    subscriptionFactory = await SubscriptionFactory.new(authorizedTokenTransferer.address);
+    await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFactory.address);
 
-    let transaction = await subscriptionFrontEnd.createSubscription(
+    let transaction = await subscriptionFactory.createSubscription(
       payee,
       mockERC20.address,
       paymentTerms.address,

@@ -5,16 +5,14 @@ import "../terms/RecurringPaymentTerms.sol";
 import "../StandardSubscription.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
-contract SubscriptionFrontEnd {
+contract SubscriptionFactory {
 
     AuthorizedTokenTransferer private _tokenTransferer;
+    address private _defaultReceivingAddress;
 
-    constructor (AuthorizedTokenTransferer tokenTransferer) public {
-        if (address(tokenTransferer) == address(0)) {
-            _tokenTransferer = new AuthorizedTokenTransferer();
-        } else {
-            _tokenTransferer = tokenTransferer;
-        }
+    constructor (AuthorizedTokenTransferer tokenTransferer, address defaultReceivingAddress) public {
+        _tokenTransferer = tokenTransferer;
+        _defaultReceivingAddress = defaultReceivingAddress;
     }
 
     event SubscriptionCreated(address subscriptionAddress, address payor, address payee);
