@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 import "../payment/PaymentObligation.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract RecurringPaymentTerms is PaymentObligation {
+contract FixedInterval is PaymentObligation {
 
     using SafeMath for uint;
 

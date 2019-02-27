@@ -3,11 +3,13 @@ pragma solidity ^0.5.0;
 import "../payment/PaymentObligation.sol";
 import "../lib/BokkyPooBahsDateTimeLibrary.sol";
 
-contract MonthlyPaymentTerms is PaymentObligation {
+contract FixedDate is PaymentObligation {
+    // TODO:  tweak this to be a base class, and extend monthly, multi monthly, weekly, and yearly child contracts from this
 
-    uint private _nextPaymentYear;
-    uint private _nextPaymentMonth;
-    uint private _nextPaymentDay;
+    uint internal _nextPaymentYear;
+    uint internal _nextPaymentMonth;
+    uint internal _nextPaymentDay;
+    
     uint private _nextPaymentTimestamp;
     uint private _amount;
 
@@ -36,8 +38,11 @@ contract MonthlyPaymentTerms is PaymentObligation {
         if (_getCurrentTimeInUnixMilliseconds() < _nextPaymentTimestamp)
             return 0;
 
-        _incrementMonth();
+        _advance();
         _calculateNextPaymentTimestamp();
+
+        emit NewPaymentDue(_amount, _nextPaymentTimestamp);
+        
         return _amount;
     }
 
@@ -46,21 +51,14 @@ contract MonthlyPaymentTerms is PaymentObligation {
         return now;
     }
 
-    function _incrementMonth() private {
-        if (_nextPaymentMonth == 12) {
-            _nextPaymentMonth = 1;
-            _nextPaymentYear = _nextPaymentYear + 1;
-        } else {
-            _nextPaymentMonth = _nextPaymentMonth + 1;
-        }        
-    }
+    function _advance() internal;
 
     function _calculateNextPaymentTimestamp() private {
         // adjust for the days of month for payment days greater than 28 (since all months have at least 28 days)
         uint adjustedPaymentDay = _nextPaymentDay;
         if (_nextPaymentDay > 28) {
             uint daysInMonth = BokkyPooBahsDateTimeLibrary._getDaysInMonth(_nextPaymentYear, _nextPaymentMonth);
-            if (adjustedPaymentDay > daysInMonth) {
+            if (_nextPaymentDay > daysInMonth) {
                 adjustedPaymentDay = daysInMonth;
             }
         }
@@ -71,8 +69,6 @@ contract MonthlyPaymentTerms is PaymentObligation {
             _nextPaymentMonth,
             adjustedPaymentDay
         );
-
-        emit NewPaymentDue(_amount, _nextPaymentTimestamp);
     }
 
     /// Code based on https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary
