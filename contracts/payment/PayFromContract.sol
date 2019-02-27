@@ -9,8 +9,8 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 contract PayFromContract {
 
     event PaidFromContract(
-        address payee,
-        IERC20 token,
+        address indexed payee,
+        IERC20 indexed token,
         uint amountPaid, 
         uint amountLeftUnpaid);
 

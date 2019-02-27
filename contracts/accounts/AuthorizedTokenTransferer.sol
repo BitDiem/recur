@@ -7,9 +7,9 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 contract AuthorizedTokenTransferer is IAuthorizedTokenTransferer, WhitelistedRole { 
 
     event TokenTransferred(
-        address from, 
-        address to, 
-        IERC20 token, 
+        address indexed from, 
+        address indexed to, 
+        IERC20 indexed token, 
         uint amount
     );
 
