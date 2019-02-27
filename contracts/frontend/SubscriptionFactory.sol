@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.4;
 
 import "../accounts/AuthorizedTokenTransferer.sol";
 import "../terms/FixedInterval.sol";

@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.4;
 
 /**
  * @title Receivable
@@ -25,12 +25,12 @@ contract Receivable {
     }
 
     function transferPayee(address payee) public onlyPayee {
-        require(_payee != payee);
         _setPayee(payee);
     }
 
     function _setPayee(address payee) private {
         require(payee != address(0));
+        require(_payee != payee);
         _payee = payee;
         emit PayeeTransferred(_payee);  
     }
