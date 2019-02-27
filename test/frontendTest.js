@@ -35,7 +35,7 @@ contract("FrontEnd Test", accounts => {
 
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
-        subscriptionFactory = await SubscriptionFactory.new(authorizedTokenTransferer.address);
+        subscriptionFactory = await SubscriptionFactory.new(authorizedTokenTransferer.address, payee.address);
         await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFactory.address);
 
         let transaction = await subscriptionFactory.createSubscription(
