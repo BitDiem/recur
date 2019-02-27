@@ -1,7 +1,10 @@
 pragma solidity ^0.5.0;
 
 import "../accounts/AuthorizedTokenTransferer.sol";
-import "../terms/RecurringPaymentTerms.sol";
+import "../terms/FixedInterval.sol";
+import "../terms/Monthly.sol";
+import "../terms/MultiMonthly.sol";
+import "../terms/Yearly.sol";
 import "../StandardSubscription.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
@@ -15,13 +18,65 @@ contract SubscriptionFactory {
         _defaultReceivingAddress = defaultReceivingAddress;
     }
 
-    event SubscriptionCreated(address subscriptionAddress, address payor, address payee);
+    event SubscriptionCreated(
+        StandardSubscription subscriptionAddress,
+        IERC20 paymentToken,
+        PaymentObligation paymentTerms,
+        address payor, 
+        address payee
+    );
 
     function getTokenTransferer() public view returns (AuthorizedTokenTransferer) {
         return _tokenTransferer;
     }
 
-    function createFixedPeriodSubscription(
+    function createMonthlySubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint nextPaymentYear,
+        uint nextPaymentMonth,
+        uint nextPaymentDay
+    )
+        public
+        returns (StandardSubscription)
+    {
+        Monthly paymentTerms = new Monthly(paymentAmount, nextPaymentYear, nextPaymentMonth, nextPaymentDay);
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createMultiMonthlySubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint nextPaymentYear,
+        uint nextPaymentMonth,
+        uint nextPaymentDay,
+        uint monthIncrement
+    )
+        public
+        returns (StandardSubscription)
+    {
+        MultiMonthly paymentTerms = new MultiMonthly(paymentAmount, nextPaymentYear, nextPaymentMonth, nextPaymentDay, monthIncrement);
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createYearlySubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint nextPaymentYear,
+        uint nextPaymentMonth,
+        uint nextPaymentDay
+    )
+        public
+        returns (StandardSubscription)
+    {
+        Yearly paymentTerms = new Yearly(paymentAmount, nextPaymentYear, nextPaymentMonth, nextPaymentDay);
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createFixedIntervalSubscription(
         address payee,
         IERC20 paymentToken, 
         uint paymentAmount,
@@ -29,18 +84,10 @@ contract SubscriptionFactory {
         uint delay
     )
         public
-        returns (address)
+        returns (StandardSubscription)
     {
-        RecurringPaymentTerms paymentTerms = new RecurringPaymentTerms(
-            paymentAmount, 
-            interval, 
-            delay
-        );
-
-        address subscriptionAddress = createSubscription(payee, paymentToken, paymentTerms);
-        paymentTerms.transferPrimary(subscriptionAddress);
-
-        return subscriptionAddress;
+        FixedInterval paymentTerms = new FixedInterval(paymentAmount, interval, delay);
+        return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
     function createSubscription(
@@ -49,7 +96,7 @@ contract SubscriptionFactory {
         PaymentObligation paymentTerms
     )
         public
-        returns (address)
+        returns (StandardSubscription)
     {
         address payor = msg.sender;
 
@@ -69,9 +116,22 @@ contract SubscriptionFactory {
         address subscriptionAddress = address(subscription);
         _tokenTransferer.addWhitelisted(subscriptionAddress);
 
-        emit SubscriptionCreated(subscriptionAddress, payor, payee);
+        emit SubscriptionCreated(subscription, paymentToken, paymentTerms, payor, payee);
 
-        return subscriptionAddress;
+        return subscription;
+    }
+
+    function _createSubscription2(
+        address payee,
+        IERC20 paymentToken,
+        PaymentObligation paymentTerms
+    )
+        private
+        returns (StandardSubscription)
+    {
+        StandardSubscription subscription = createSubscription(payee, paymentToken, paymentTerms);
+        paymentTerms.transferPrimary(address(subscription));
+        return subscription;
     }
 
 }
