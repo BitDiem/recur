@@ -43,6 +43,9 @@ contract("Unit Tests", accounts => {
         await subscription.addCreditAdmin(payee);
         await subscription.renounceCreditAdmin();
 
+        await subscription.addTokenWithdrawer(payor);
+        await subscription.renounceTokenWithdrawer();
+
         await paymentTerms.transferPrimary(subscription.address);
 
         await authorizedTokenTransferer.addWhitelisted(subscription.address);
@@ -83,6 +86,17 @@ contract("Unit Tests", accounts => {
     creditBalance = (await subscription.getCredit()).valueOf();
     assert.equal(creditBalance, 1, "remove credit");
   });
+  
+  it("TokenEscrow: withdrawToken", async () => {
+    await mockERC20.transfer(subscription.address, 2, {from: tokenBank});
+    await subscription.withdrawToken(mockERC20.address, 1, {from: payor});
+    payorTokenBalance = (await mockERC20.balanceOf(payor)).valueOf();
+    assert.equal(payorTokenBalance, startingTokenBalance + 1, "token balance");
+
+    //let result = await subscription.withdrawToken("0x0000000000000000000000000000000000000000", 1, {from: payor});
+    //console.log(result);
+  });
+
 
 
 
