@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
-import "../../contracts/terms/RecurringPaymentTerms.sol";
+import "../../contracts/terms/FixedInterval.sol";
 
-contract MockRecurringPaymentTerms is RecurringPaymentTerms {
+contract MockRecurringPaymentTerms is FixedInterval {
 
     uint private currentTimeStamp;
 
@@ -11,7 +11,7 @@ contract MockRecurringPaymentTerms is RecurringPaymentTerms {
         uint timeInterval,
         uint delay // use case: "first 30 days free"
     )
-        RecurringPaymentTerms(amount, timeInterval, delay)
+        FixedInterval(amount, timeInterval, delay)
         public
     {
     }
