@@ -34,9 +34,10 @@ contract StandardSubscription is PaymentProcessor, PaymentDebt, TokenEscrow {
 
     function endSubscription() public {
         require(getPayor() == msg.sender || getPayee() == msg.sender);
+        address payable balanceRecipient = address(uint160(getPayor()));
+        _paymentObligation.destroy(balanceRecipient);
         emit SubscriptionEnded(msg.sender);
-        address payable fundsTarget = address(uint160(getPayor()));
-        selfdestruct(fundsTarget);
+        selfdestruct(balanceRecipient);
     }
 
 }
