@@ -16,7 +16,8 @@ contract MultiMonthly is FixedDate {
         FixedDate(amount, nextPaymentYear, nextPaymentMonth, nextPaymentDay)
         public
     {
-        require(monthIncrement < 12);
+        // use Monthly contract if you want increment = 1
+        require(monthIncrement < 12 && monthIncrement > 1);
         _monthIncrement = monthIncrement;
     }
 
