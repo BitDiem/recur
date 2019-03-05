@@ -1,32 +1,39 @@
 pragma solidity ^0.5.0;
 
+import "../frontend/SubscriptionFrontEnd.sol";
 import "../frontend/SubscriptionFactory.sol";
 import "../accounts/AuthorizedTokenTransferer.sol";
 
 contract PublisherFactory {
 
-    event PublisherCreated(SubscriptionFactory factory);
+    SubscriptionFactory private _subscriptionFactory;
 
-    function createPublisher(address defaultReceivingAddress) public returns (SubscriptionFactory) {
-        return createPublisher(new AuthorizedTokenTransferer(), defaultReceivingAddress);
+    event PublisherCreated(SubscriptionFrontEnd publisher);
+        
+    constructor (SubscriptionFactory subscriptionFactory) public {
+        _subscriptionFactory = subscriptionFactory;
+    }
+
+    function createPublisher() public returns (SubscriptionFrontEnd) {
+        AuthorizedTokenTransferer authorizedTokenTransferer = new AuthorizedTokenTransferer();
+        SubscriptionFrontEnd subscriptionFrontEnd = createPublisher(new AuthorizedTokenTransferer());
+        authorizedTokenTransferer.addWhitelistAdmin(address(subscriptionFrontEnd));
+        return subscriptionFrontEnd;
     }
 
     function createPublisher(
-        AuthorizedTokenTransferer defaultAuthorizedTransferer,
-        address defaultReceivingAddress
+        AuthorizedTokenTransferer authorizedTransferer
     )
         public
-        returns (SubscriptionFactory)
+        returns (SubscriptionFrontEnd)
     {
-        require(defaultReceivingAddress != address(0));
-
-        SubscriptionFactory factory = new SubscriptionFactory(
-            defaultAuthorizedTransferer,
-            defaultReceivingAddress
+        SubscriptionFrontEnd frontEnd = new SubscriptionFrontEnd(
+            _subscriptionFactory,
+            authorizedTransferer
         );
 
-        emit PublisherCreated(factory);
-        return factory;
+        emit PublisherCreated(frontEnd);
+        return frontEnd;
     }
 
 }

@@ -2,6 +2,7 @@ const MockERC20 = artifacts.require('MockERC20')
 const MockRecurringPaymentTerms = artifacts.require('MockRecurringPaymentTerms')
 const StandardSubscription = artifacts.require('StandardSubscription')
 const SubscriptionFactory = artifacts.require('SubscriptionFactory')
+const SubscriptionFrontEnd = artifacts.require('SubscriptionFrontEnd')
 const AuthorizedTokenTransferer = artifacts.require('AuthorizedTokenTransferer')
 const assert = require('assert')
 
@@ -14,7 +15,8 @@ contract("FrontEnd Test", accounts => {
     let paymentTerms;
     let authorizedTokenTransferer;
     let subscription;
-    let subscriptionFactory;
+    let subscriptionFactory
+    let subscriptionFrontEnd;
 
     let creditBalance;
     let subscriptionTokenBalance;
@@ -27,18 +29,17 @@ contract("FrontEnd Test", accounts => {
         tokenBank = accounts[0];
         payor = accounts[1];
         payee = accounts[2];
-        //console.log("Payor address: ", payor);
-        //console.log("Payee address: ", payee);
 
         mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", tokenBank, startingTokenBalance * 2);
         await mockERC20.transfer(payor, startingTokenBalance, {from: tokenBank});
 
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
-        subscriptionFactory = await SubscriptionFactory.new(authorizedTokenTransferer.address, payee);
-        await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFactory.address);
+        subscriptionFactory = await SubscriptionFactory.new();
+        subscriptionFrontEnd = await SubscriptionFrontEnd.new(subscriptionFactory.address, authorizedTokenTransferer.address);
+        await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFrontEnd.address);
 
-        let transaction = await subscriptionFactory.createSubscription(
+        let transaction = await subscriptionFrontEnd.createSubscription(
           payee,
           mockERC20.address,
           paymentTerms.address,
