@@ -16,19 +16,15 @@ contract AuthorizedTokenTransferer is IAuthorizedTokenTransferer, WhitelistedRol
     function transfer(
         address from, 
         address to, 
-        IERC20 tokenContract,
+        IERC20 token,
         uint amount
     ) 
         public
         onlyWhitelisted
     {
-        /*require(from != address(0));
-        require(to != address(0));
-        require(token != address(0));
-        require(amount > 0);*/
-        require (tokenContract.allowance(from, address(this)) >= amount, "Token transfer not authorized");
-        tokenContract.transferFrom(from, to, amount);
-        emit TokenTransferred(from, to, tokenContract, amount);
+        require (token.allowance(from, address(this)) >= amount, "Token transfer not authorized");
+        token.transferFrom(from, to, amount);
+        emit TokenTransferred(from, to, token, amount);
     }
 
 }

@@ -4,7 +4,6 @@ import "../payment/PaymentObligation.sol";
 import "../lib/BokkyPooBahsDateTimeLibrary.sol";
 
 contract FixedDate is PaymentObligation {
-    // TODO:  tweak this to be a base class, and extend monthly, multi monthly, weekly, and yearly child contracts from this
 
     uint internal _nextPaymentYear;
     uint internal _nextPaymentMonth;

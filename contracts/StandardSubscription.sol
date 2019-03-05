@@ -19,7 +19,7 @@ contract StandardSubscription is PaymentProcessor, PaymentDebt, TokenEscrow {
         IAuthorizedTokenTransferer authorizedTransferer,
         IERC20 token,
         PaymentObligation paymentObligation
-    ) 
+    )
         PaymentProcessor(payor, payee, authorizedTransferer, token)
         public 
     {
