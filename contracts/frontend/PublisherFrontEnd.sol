@@ -4,7 +4,7 @@ import "../frontend/SubscriptionFrontEnd.sol";
 import "../frontend/SubscriptionFactory.sol";
 import "../accounts/AuthorizedTokenTransferer.sol";
 
-contract PublisherFactory {
+contract PublisherFrontEnd {
 
     SubscriptionFactory private _subscriptionFactory;
 
