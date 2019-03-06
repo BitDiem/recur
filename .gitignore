@@ -373,3 +373,6 @@ testeth
 node_modules
 bin_output
 logs
+
+# dotenv
+.env
