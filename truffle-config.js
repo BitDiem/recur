@@ -23,11 +23,14 @@
  */
 
 const HDWalletProvider = require("truffle-hdwallet-provider");
-// const HDWallet = require('truffle-hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
-//
 // const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+
+require('dotenv').config()  // Store environment-specific variable from '.env' to process.env
+//const mnemonic = process.env.MNENOMIC;
+const pk = process.env.PK;
+const infuraKey = process.env.INFURA_API_KEY;
+const infuraProjectId = process.env.INFURA_PROJECT_ID;
+const infuraProjectSecret = process.env.INFURA_PROJECT_SECRET;
 
 module.exports = {
   /**
@@ -82,9 +85,8 @@ module.exports = {
       // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     // },
 
-    ropsten: {
-      //provider: () => new HDWalletProvider("<passphrase>", "https://ropsten.infura.io/<key>"),
-      provider: () => new HDWalletProvider("https://ropsten.infura.io/"),
+    rinkeby: {
+      provider: () => new HDWalletProvider(pk, "https://rinkeby.infura.io/" + infuraProjectId),
       network_id: 3,       // Ropsten's id
       gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
