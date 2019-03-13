@@ -27,8 +27,8 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 
 require('dotenv').config()  // Store environment-specific variable from '.env' to process.env
 //const mnemonic = process.env.MNENOMIC;
+//const infuraKey = process.env.INFURA_API_KEY;
 const pk = process.env.PK;
-const infuraKey = process.env.INFURA_API_KEY;
 const infuraProjectId = process.env.INFURA_PROJECT_ID;
 const infuraProjectSecret = process.env.INFURA_PROJECT_SECRET;
 
@@ -86,9 +86,9 @@ module.exports = {
     // },
 
     rinkeby: {
-      provider: () => new HDWalletProvider(pk, "https://rinkeby.infura.io/" + infuraProjectId),
-      network_id: 3,       // Ropsten's id
-      gas: 5500000,        // Ropsten has a lower block limit than mainnet
+      provider: () => new HDWalletProvider(pk, "https://rinkeby.infura.io/v3/" + infuraProjectId),
+      network_id: 4,       // Rinkeby's id
+      gasPrice: 6000000000,  // 6 gwei (in wei) (default: 100 gwei)
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
