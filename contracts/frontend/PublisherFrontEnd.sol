@@ -16,8 +16,9 @@ contract PublisherFrontEnd {
 
     function createPublisher() public returns (SubscriptionFrontEnd) {
         AuthorizedTokenTransferer authorizedTokenTransferer = new AuthorizedTokenTransferer();
-        SubscriptionFrontEnd subscriptionFrontEnd = createPublisher(new AuthorizedTokenTransferer());
+        SubscriptionFrontEnd subscriptionFrontEnd = createPublisher(authorizedTokenTransferer);
         authorizedTokenTransferer.addWhitelistAdmin(address(subscriptionFrontEnd));
+        authorizedTokenTransferer.renounceWhitelistAdmin();
         return subscriptionFrontEnd;
     }
 
