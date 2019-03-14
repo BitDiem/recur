@@ -6,7 +6,7 @@ import "../terms/FixedInterval.sol";
 import "../terms/Monthly.sol";
 import "../terms/MultiMonthly.sol";
 import "../terms/Yearly.sol";
-import "../StandardSubscription.sol";
+import "../subscription/StandardSubscription.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 contract SubscriptionFrontEnd {
