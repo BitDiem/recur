@@ -6,4 +6,6 @@ interface IAuthorizedTokenTransferer {
 
     function transfer(address from, address to, IERC20 token, uint amount) external;
 
+    function transferMax(address from, address to, IERC20 token, uint amount) external returns (uint, uint);
+
 }
