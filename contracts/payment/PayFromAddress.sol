@@ -29,25 +29,15 @@ contract PayFromAddress {
         IAuthorizedTokenTransferer authorizedTransferer
     )
         internal
-        returns (uint remainder) 
+        returns (uint) 
     {
-        if (amount == 0)
+        if (amount == 0) {
             return amount;
-
-        // check how much the transferer is authorized to send on behalf of the payor
-        uint authorizedAmount = token.allowance(payor, address(authorizedTransferer));
-        uint availableBalance = token.balanceOf(payor);
-        uint amountToPay = Math.min(amount, Math.min(authorizedAmount, availableBalance));
-
-        if (amountToPay > 0) {
-            authorizedTransferer.transfer(payor, payee, token, amountToPay);
-            remainder = amount - amountToPay;
-            emit PaidFromAddress(payor, payee, token, amountToPay, remainder);
         } else {
-            remainder = amount;
+            (uint paid, uint unpaid) = authorizedTransferer.transferMax(payor, payee, token, amount);
+            emit PaidFromAddress(payor, payee, token, paid, unpaid);
+            return unpaid;
         }
-
-        return remainder;
     }
 
 }
