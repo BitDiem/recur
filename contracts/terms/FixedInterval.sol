@@ -20,18 +20,18 @@ contract FixedInterval is PaymentObligation {
 
     constructor(
         uint amount, 
-        uint timeInterval,
+        uint timeInterval, // as measured in seconds between intervals
         uint delay // use case: "first 30 days free"
     )
         public
     {
         _amount = amount;
         _timeInterval = timeInterval;
-        _lastIntervalTime = _getCurrentTimeInUnixMilliseconds().add(delay);
+        _lastIntervalTime = _getCurrentTimeInUnixSeconds().add(delay);
     }
 
     function _calculateOutstandingAmount() internal returns (uint) {
-        uint currentTime = _getCurrentTimeInUnixMilliseconds();
+        uint currentTime = _getCurrentTimeInUnixSeconds();
         uint elapsedTime = currentTime - _lastIntervalTime;
         uint div = elapsedTime / _timeInterval;
 
@@ -55,7 +55,7 @@ contract FixedInterval is PaymentObligation {
     }
 
     /// Wrap the call and make it internal - makes it easy to create a derived mock class
-    function _getCurrentTimeInUnixMilliseconds() internal view returns (uint) {
+    function _getCurrentTimeInUnixSeconds() internal view returns (uint) {
         return now;
     }
 
