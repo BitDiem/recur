@@ -1,7 +1,6 @@
 const MockERC20 = artifacts.require('MockERC20')
 const StandardSubscription = artifacts.require('StandardSubscription')
 const PublisherFrontEnd = artifacts.require('PublisherFrontEnd')
-const SubscriptionFactory = artifacts.require('SubscriptionFactory')
 const SubscriptionFrontEnd = artifacts.require('SubscriptionFrontEnd')
 const AuthorizedTokenTransferer = artifacts.require('AuthorizedTokenTransferer')
 const assert = require('assert')
@@ -13,8 +12,6 @@ contract("Publisher FrontEnd Test", accounts => {
     let payee;
     let mockERC20;
     let authorizedTokenTransferer;
-    let subscription;
-    let subscriptionFactory
     let subscriptionFrontEnd;
     let transaction;
     let log;
@@ -29,8 +26,7 @@ contract("Publisher FrontEnd Test", accounts => {
         mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", tokenBank, startingTokenBalance * 2);
         await mockERC20.transfer(payor, startingTokenBalance, {from: tokenBank});
 
-        subscriptionFactory = await SubscriptionFactory.new();
-        publisherFrontEnd = await PublisherFrontEnd.new(subscriptionFactory.address);
+        publisherFrontEnd = await PublisherFrontEnd.new();
 
         transaction = await publisherFrontEnd.createPublisher();
         log = transaction.logs[0];

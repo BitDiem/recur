@@ -1,7 +1,6 @@
 const MockERC20 = artifacts.require('MockERC20')
 const MockRecurringPaymentTerms = artifacts.require('MockRecurringPaymentTerms')
 const StandardSubscription = artifacts.require('StandardSubscription')
-const SubscriptionFactory = artifacts.require('SubscriptionFactory')
 const SubscriptionFrontEnd = artifacts.require('SubscriptionFrontEnd')
 const AuthorizedTokenTransferer = artifacts.require('AuthorizedTokenTransferer')
 const assert = require('assert')
@@ -15,7 +14,6 @@ contract("FrontEnd Test", accounts => {
     let paymentTerms;
     let authorizedTokenTransferer;
     let subscription;
-    let subscriptionFactory
     let subscriptionFrontEnd;
 
     let creditBalance;
@@ -35,8 +33,7 @@ contract("FrontEnd Test", accounts => {
 
         paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
-        subscriptionFactory = await SubscriptionFactory.new();
-        subscriptionFrontEnd = await SubscriptionFrontEnd.new(subscriptionFactory.address, authorizedTokenTransferer.address);
+        subscriptionFrontEnd = await SubscriptionFrontEnd.new(authorizedTokenTransferer.address);
         await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFrontEnd.address);
 
         let transaction = await subscriptionFrontEnd.createSubscription(
