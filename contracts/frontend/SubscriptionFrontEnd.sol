@@ -1,23 +1,16 @@
 pragma solidity ^0.5.0;
 
-import "../frontend/SubscriptionFactory.sol";
-import "../accounts/AuthorizedTokenTransferer.sol";
-import "../terms/FixedInterval.sol";
-import "../terms/Monthly.sol";
-import "../terms/MultiMonthly.sol";
-import "../terms/Yearly.sol";
 import "../subscription/StandardSubscription.sol";
+import "../payment/PaymentObligation.sol";
+import "../accounts/AuthorizedTokenTransferer.sol";
+import "../lib/factory/SubscriptionFactory.sol";
+import "../lib/factory/MonthlyTermsFactory.sol";
+import "../lib/factory/MultiMonthlyTermsFactory.sol";
+import "../lib/factory/YearlyTermsFactory.sol";
+import "../lib/factory/FixedIntervalTermsFactory.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 contract SubscriptionFrontEnd {
-
-    SubscriptionFactory private _subscriptionFactory;
-    AuthorizedTokenTransferer private _tokenTransferer;
-
-    constructor (SubscriptionFactory subscriptionFactory, AuthorizedTokenTransferer tokenTransferer) public {
-        _subscriptionFactory = subscriptionFactory;
-        _tokenTransferer = tokenTransferer;
-    }
 
     event SubscriptionCreated(
         StandardSubscription subscriptionAddress,
@@ -26,6 +19,12 @@ contract SubscriptionFrontEnd {
         address payor, 
         address payee
     );
+
+    AuthorizedTokenTransferer private _tokenTransferer;
+
+    constructor (AuthorizedTokenTransferer tokenTransferer) public {
+        _tokenTransferer = tokenTransferer;
+    }
 
     function getTokenTransferer() public view returns (AuthorizedTokenTransferer) {
         return _tokenTransferer;
@@ -42,7 +41,12 @@ contract SubscriptionFrontEnd {
         public
         returns (StandardSubscription)
     {
-        Monthly paymentTerms = new Monthly(paymentAmount, nextPaymentYear, nextPaymentMonth, nextPaymentDay);
+        PaymentObligation paymentTerms = MonthlyTermsFactory.create(
+            paymentAmount, 
+            nextPaymentYear, 
+            nextPaymentMonth, 
+            nextPaymentDay
+        );
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
@@ -58,7 +62,13 @@ contract SubscriptionFrontEnd {
         public
         returns (StandardSubscription)
     {
-        MultiMonthly paymentTerms = new MultiMonthly(paymentAmount, nextPaymentYear, nextPaymentMonth, nextPaymentDay, monthIncrement);
+        PaymentObligation paymentTerms = MultiMonthlyTermsFactory.create(
+            paymentAmount, 
+            nextPaymentYear, 
+            nextPaymentMonth, 
+            nextPaymentDay, 
+            monthIncrement
+        );
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
@@ -73,7 +83,12 @@ contract SubscriptionFrontEnd {
         public
         returns (StandardSubscription)
     {
-        Yearly paymentTerms = new Yearly(paymentAmount, nextPaymentYear, nextPaymentMonth, nextPaymentDay);
+        PaymentObligation paymentTerms = YearlyTermsFactory.create(
+            paymentAmount, 
+            nextPaymentYear, 
+            nextPaymentMonth, 
+            nextPaymentDay
+        );
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
@@ -87,7 +102,7 @@ contract SubscriptionFrontEnd {
         public
         returns (StandardSubscription)
     {
-        FixedInterval paymentTerms = new FixedInterval(paymentAmount, interval, delay);
+        PaymentObligation paymentTerms = FixedIntervalTermsFactory.create(paymentAmount, interval, delay);
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
@@ -101,7 +116,7 @@ contract SubscriptionFrontEnd {
     {
         address payor = msg.sender;
 
-        StandardSubscription subscription = _subscriptionFactory.createSubscription(
+        StandardSubscription subscription = SubscriptionFactory.create(
             payor,
             payee,
             _tokenTransferer, 
