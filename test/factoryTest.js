@@ -36,7 +36,6 @@ contract("Publisher FrontEnd Test", accounts => {
         let authorizedTokenTransfererAddress = (await subscriptionFrontEnd.getTokenTransferer()).valueOf();
         authorizedTokenTransferer = await AuthorizedTokenTransferer.at(authorizedTokenTransfererAddress);
         await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
-        console.log("before each completed SUCCESS");
     })
 
   it("should create a fixed interval subscription", async () => {  
@@ -48,7 +47,6 @@ contract("Publisher FrontEnd Test", accounts => {
         0,
         {from: payor}
     );
-    console.log("WE GOT THIS FAR");
     log = transaction.logs[0];
     let subscriptionAddress = log.args.subscriptionAddress;
     subscription = await StandardSubscription.at(subscriptionAddress);
