@@ -1,18 +1,14 @@
 pragma solidity ^0.5.0;
 
 import "../frontend/SubscriptionFrontEnd.sol";
-import "../frontend/SubscriptionFactory.sol";
 import "../accounts/AuthorizedTokenTransferer.sol";
 
 contract PublisherFrontEnd {
 
-    SubscriptionFactory private _subscriptionFactory;
-
-    event PublisherCreated(SubscriptionFrontEnd publisher);
-        
-    constructor (SubscriptionFactory subscriptionFactory) public {
-        _subscriptionFactory = subscriptionFactory;
-    }
+    event PublisherCreated(
+        SubscriptionFrontEnd publisher, 
+        AuthorizedTokenTransferer authorizedTokenTransferer
+    );
 
     function createPublisher() public returns (SubscriptionFrontEnd) {
         AuthorizedTokenTransferer authorizedTokenTransferer = new AuthorizedTokenTransferer();
@@ -28,12 +24,8 @@ contract PublisherFrontEnd {
         public
         returns (SubscriptionFrontEnd)
     {
-        SubscriptionFrontEnd frontEnd = new SubscriptionFrontEnd(
-            _subscriptionFactory,
-            authorizedTransferer
-        );
-
-        emit PublisherCreated(frontEnd);
+        SubscriptionFrontEnd frontEnd = new SubscriptionFrontEnd(authorizedTransferer);
+        emit PublisherCreated(frontEnd, authorizedTransferer);
         return frontEnd;
     }
 
