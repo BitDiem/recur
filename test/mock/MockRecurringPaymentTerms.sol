@@ -20,7 +20,7 @@ contract MockRecurringPaymentTerms is FixedInterval {
         currentTimeStamp = val;
     }
 
-    function _getCurrentTimeInUnixMilliseconds() internal view returns (uint) {
+    function _getCurrentTimeInUnixSeconds() internal view returns (uint) {
         return currentTimeStamp;
     }
 
