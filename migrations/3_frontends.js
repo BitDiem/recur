@@ -8,14 +8,7 @@ var PublisherFrontEnd = artifacts.require("PublisherFrontEnd");
 
 module.exports = function(deployer) {
 
-  // Deploy library LibA, then link LibA to contract B, then deploy B.
-  // Deploy libraries
-  deployer.deploy(SubscriptionFactory);
-  deployer.deploy(MonthlyTermsFactory);
-  deployer.deploy(MultiMonthlyTermsFactory);
-  deployer.deploy(YearlyTermsFactory);
-  deployer.deploy(FixedIntervalTermsFactory);
-
+  // link deployed libraries to the two frontends
   deployer.link(SubscriptionFactory, [SubscriptionFrontEnd, PublisherFrontEnd]);
   deployer.link(MonthlyTermsFactory, [SubscriptionFrontEnd, PublisherFrontEnd]);
   deployer.link(MultiMonthlyTermsFactory, [SubscriptionFrontEnd, PublisherFrontEnd]);
@@ -24,9 +17,4 @@ module.exports = function(deployer) {
 
   deployer.deploy(PublisherFrontEnd);
 
-  /*
-  deployer.deploy(SubscriptionFactory).then(function() {
-    return deployer.deploy(PublisherFrontEnd, SubscriptionFactory.address);
-  });
-  */
 };
