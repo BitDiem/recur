@@ -1,10 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-
 contract PaymentDebt {
-
-    using SafeMath for uint;
 
     uint private _outstandingAmount;
 
