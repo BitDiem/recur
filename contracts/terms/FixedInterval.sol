@@ -8,7 +8,7 @@ contract FixedInterval is PaymentObligation {
     using SafeMath for uint;
 
     uint private _amount;
-    uint private _timeInterval;             // interval as unix milliseconds
+    uint private _timeInterval;             // interval as unix seconds
     uint private _lastIntervalTime;         // last interval timestamp
     uint private _outstandingIntervals;
 

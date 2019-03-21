@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "../payment/PaymentObligation.sol";
-import "../lib/BokkyPooBahsDateTimeLibrary.sol";
+import "../lib/date/BokkyPooBahsDateTimeLibrary.sol";
 
 contract FixedDate is PaymentObligation {
 
@@ -34,7 +34,7 @@ contract FixedDate is PaymentObligation {
     }
 
     function _calculateOutstandingAmount() internal returns (uint) {
-        if (_getCurrentTimeInUnixMilliseconds() < _nextPaymentTimestamp)
+        if (_getCurrentTimeInUnixSeconds() < _nextPaymentTimestamp)
             return 0;
 
         _advance();
@@ -46,7 +46,7 @@ contract FixedDate is PaymentObligation {
     }
 
     /// Wrap the call and make it internal - makes it easy to create a derived mock class
-    function _getCurrentTimeInUnixMilliseconds() internal view returns (uint) {
+    function _getCurrentTimeInUnixSeconds() internal view returns (uint) {
         return now;
     }
 
