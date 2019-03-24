@@ -8,12 +8,23 @@ library YearlyTermsFactory {
         uint amount,
         uint nextPaymentYear,
         uint nextPaymentMonth,
-        uint nextPaymentDay
+        uint nextPaymentDay,
+        uint nextPaymentHour,
+        uint nextPaymentMinute,
+        uint nextPaymentSecond
     )
         external
         returns (Yearly)
     {
-        return new Yearly(amount, nextPaymentYear, nextPaymentMonth, nextPaymentDay);
+        return new Yearly(
+            amount, 
+            nextPaymentYear, 
+            nextPaymentMonth, 
+            nextPaymentDay, 
+            nextPaymentHour, 
+            nextPaymentMinute, 
+            nextPaymentSecond
+        );    
     }
 
 }

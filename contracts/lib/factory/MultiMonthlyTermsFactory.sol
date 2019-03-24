@@ -9,12 +9,24 @@ library MultiMonthlyTermsFactory {
         uint nextPaymentYear,
         uint nextPaymentMonth,
         uint nextPaymentDay,
+        uint nextPaymentHour,
+        uint nextPaymentMinute,
+        uint nextPaymentSecond,
         uint monthIncrement
     )
         external
         returns (MultiMonthly)
     {
-        return new MultiMonthly(amount, nextPaymentYear, nextPaymentMonth, nextPaymentDay, monthIncrement);
+        return new MultiMonthly(
+            amount, 
+            nextPaymentYear, 
+            nextPaymentMonth, 
+            nextPaymentDay, 
+            nextPaymentHour, 
+            nextPaymentMinute, 
+            nextPaymentSecond,
+            monthIncrement
+        );
     }
 
 }

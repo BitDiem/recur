@@ -8,12 +8,23 @@ library MonthlyTermsFactory {
         uint amount,
         uint nextPaymentYear,
         uint nextPaymentMonth,
-        uint nextPaymentDay
+        uint nextPaymentDay,
+        uint nextPaymentHour,
+        uint nextPaymentMinute,
+        uint nextPaymentSecond
     )
         external
         returns (Monthly)
     {
-        return new Monthly(amount, nextPaymentYear, nextPaymentMonth, nextPaymentDay);
+        return new Monthly(
+            amount, 
+            nextPaymentYear, 
+            nextPaymentMonth, 
+            nextPaymentDay, 
+            nextPaymentHour, 
+            nextPaymentMinute, 
+            nextPaymentSecond
+        );
     }
 
 }
