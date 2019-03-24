@@ -30,7 +30,8 @@ contract Seconds is PaymentObligation, MockableCurrentTime {
         public
     {
         require(amount > 0);
-        require(DateTime.isValidMonthAndYear(nextPaymentMonth, nextPaymentYear));
+        require(secondsIncrement > 0);
+        require(DateTime.isValidYearAndMonth(nextPaymentYear, nextPaymentMonth));
         require(nextPaymentDay > 0);
         require(DateTime.isValidTime(nextPaymentHour, nextPaymentMinute, nextPaymentSecond));
 

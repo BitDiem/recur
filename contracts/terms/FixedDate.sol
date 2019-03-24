@@ -41,7 +41,7 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
         public
     {
         require(amount > 0);
-        require(DateTime.isValidMonthAndYear(nextPaymentMonth, nextPaymentYear));
+        require(DateTime.isValidYearAndMonth(nextPaymentYear, nextPaymentMonth));
         require(nextPaymentDay > 0);
         require(DateTime.isValidTime(nextPaymentHour, nextPaymentMinute, nextPaymentSecond));
 

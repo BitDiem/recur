@@ -8,7 +8,7 @@ library DateTime {
     uint constant SECONDS_PER_MINUTE = 60;
 
     /// Code based on https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary
-    function isValidMonthAndYear(uint month, uint year) internal pure returns (bool) {
+    function isValidYearAndMonth(uint year, uint month) internal pure returns (bool) {
         return (year >= 1970 && month > 0 && month <= 12);
     }
 
