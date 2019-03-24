@@ -21,7 +21,8 @@ library SubscriptionFactory {
             payee,
             authorizedTransferer, 
             paymentToken, 
-            paymentTerms);
+            paymentTerms
+        );
     }
 
 }
