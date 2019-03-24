@@ -11,7 +11,7 @@ import "../lib/date/MockableCurrentTime.sol";
  * Contract stores the year, month, day and total seconds offset, in addition to a timestamp value.
  * Justification: saves a call to BokkyPooBahsDateTimeLibrary._daysToDate, 
  * at the expense of using a bit more storage (4 additional uint's vs. just storing a timestamp).
- * NOTE: For this contract as well as those deriving from it, specifying a @nextPaymentDay greater than 31 will ensure 
+ * NOTE: For this contract as well as those deriving from it, specifying a "nextPaymentDay" greater than 31 will ensure 
  * that payment is due on the last day of the month, regardless of how many days are in that month.
  */
 contract FixedDate is PaymentObligation, MockableCurrentTime {
