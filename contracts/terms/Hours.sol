@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "../terms/Seconds.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
  * @title Hours
@@ -8,6 +9,8 @@ import "../terms/Seconds.sol";
  * measured in hours, between due dates thereafter.
  */
 contract Hours is Seconds {
+
+    using SafeMath for uint;
 
     uint constant SECONDS_PER_HOUR = 60 * 60;
 
@@ -29,7 +32,8 @@ contract Hours is Seconds {
             nextPaymentHour,
             nextPaymentMinute,
             nextPaymentSecond,
-            hoursIncrement * SECONDS_PER_HOUR)
+            hoursIncrement.mul(SECONDS_PER_HOUR)
+        )
         public
     {
     }
