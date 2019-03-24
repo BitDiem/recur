@@ -16,10 +16,10 @@ contract Months is FixedDate {
         uint nextPaymentYear,
         uint nextPaymentMonth,
         uint nextPaymentDay,
-        uint monthIncrement,
         uint nextPaymentHour,
         uint nextPaymentMinute,
-        uint nextPaymentSecond
+        uint nextPaymentSecond,
+        uint monthIncrement
     )
         FixedDate(amount, nextPaymentYear, nextPaymentMonth, nextPaymentDay, nextPaymentHour, nextPaymentMinute, nextPaymentSecond)
         public
