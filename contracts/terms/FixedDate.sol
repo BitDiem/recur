@@ -24,7 +24,7 @@ contract FixedDate is PaymentObligation {
     uint private _nextPaymentTimestamp;
     uint private _amount;
 
-    event NewPaymentDue(uint amount, uint paymentDueDate);
+    event PaymentDue(uint paymentDueDate, uint amount);
 
     constructor(
         uint amount,
@@ -54,11 +54,13 @@ contract FixedDate is PaymentObligation {
         if (_getCurrentTimeInUnixSeconds() < _nextPaymentTimestamp)
             return 0;
 
+        uint currentPaymentDue = _nextPaymentTimestamp;
+
         _advance();
         _calculateNextPaymentTimestamp();
-
-        emit NewPaymentDue(_amount, _nextPaymentTimestamp);
         
+        emit PaymentDue(currentPaymentDue, _amount);
+
         return _amount;
     }
 
