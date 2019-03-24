@@ -3,11 +3,11 @@ pragma solidity ^0.5.0;
 import "../terms/FixedDate.sol";
 
 /**
- * @title MultiMonthly
+ * @title Months
  * @dev Increments next payment due date by N months.  Common use-case: quarterly payments.
  * Payment will *always* occur on the same day, the same hour, and the same second.
  */
-contract MultiMonthly is FixedDate {
+contract Months is FixedDate {
 
     uint private _monthIncrement;
 

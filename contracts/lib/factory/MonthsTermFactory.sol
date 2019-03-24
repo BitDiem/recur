@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
-import "../../terms/MultiMonthly.sol";
+import "../../terms/Months.sol";
 
-library MultiMonthlyTermsFactory {
+library MonthsTermsFactory {
 
     function create(
         uint amount,
@@ -15,9 +15,9 @@ library MultiMonthlyTermsFactory {
         uint monthIncrement
     )
         external
-        returns (MultiMonthly)
+        returns (Months)
     {
-        return new MultiMonthly(
+        return new Months(
             amount, 
             nextPaymentYear, 
             nextPaymentMonth, 
