@@ -19,7 +19,7 @@ contract Hours is Seconds {
         uint nextPaymentHour,
         uint nextPaymentMinute,
         uint nextPaymentSecond,
-        uint minutesIncrement
+        uint hoursIncrement
     )
         Seconds(
             amount, 
@@ -29,7 +29,7 @@ contract Hours is Seconds {
             nextPaymentHour,
             nextPaymentMinute,
             nextPaymentSecond,
-            minutesIncrement * SECONDS_PER_HOUR)
+            hoursIncrement * SECONDS_PER_HOUR)
         public
     {
     }
