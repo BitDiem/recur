@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "../payment/PaymentObligation.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
+/// key difference in how this works vs. fixed date - will pay out all elapsed intervals, not just first
 contract FixedInterval is PaymentObligation {
 
     using SafeMath for uint;
