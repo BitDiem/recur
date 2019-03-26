@@ -12,12 +12,9 @@ library DateTime {
         return (year >= 1970 && month > 0 && month <= 12);
     }
 
+    /// Code based on https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary
     function isValidTime(uint hour, uint minute, uint second) internal pure returns (bool) {
-        return (
-            hour > 0 && hour < 24 &&
-            minute > 0 && minute < 60 &&
-            second > 0 && second < 60
-        );
+        return (hour < 24 && minute < 60 && second < 60);
     }
 
     function isValidDateTime(uint year, uint month, uint day, uint hour, uint minute, uint second) internal pure returns (bool) {
