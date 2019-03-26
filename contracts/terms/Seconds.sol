@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
 import "../payment/PaymentObligation.sol";
-import "../lib/date/DateTime.sol";
 import "../lib/date/MockableCurrentTime.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
  * @title Seconds
@@ -11,36 +11,34 @@ import "../lib/date/MockableCurrentTime.sol";
  */
 contract Seconds is PaymentObligation, MockableCurrentTime {
 
-    uint private _nextPaymentTimestamp;
+    using SafeMath for uint;
+
+    uint private _nextPaymentDueTimestamp;
     uint private _amount;
     uint private _secondsIncrement;
 
-    event PaymentDue(uint paymentDueDate, uint amount);
+    event PaymentDue(
+        uint paymentDueDate, 
+        uint amountDue, 
+        uint elapsedIntervals, 
+        uint nextPaymentDueDate
+    );
 
     constructor(
         uint amount,
-        uint nextPaymentYear,
-        uint nextPaymentMonth,
-        uint nextPaymentDay,
-        uint nextPaymentHour,
-        uint nextPaymentMinute,
-        uint nextPaymentSecond,
+        uint nextPaymentDueTimestamp,
         uint secondsIncrement
     )
         public
     {
         require(amount > 0);
         require(secondsIncrement > 0);
-        require(DateTime.isValidYearAndMonth(nextPaymentYear, nextPaymentMonth));
-        require(nextPaymentDay > 0);
-        require(DateTime.isValidTime(nextPaymentHour, nextPaymentMinute, nextPaymentSecond));
 
         _amount = amount;
+        _nextPaymentDueTimestamp = nextPaymentDueTimestamp;
         _secondsIncrement = secondsIncrement;
 
-        uint date = DateTime.timestampFromDate(nextPaymentYear, nextPaymentMonth, nextPaymentDay);
-        uint secondsOffset = DateTime.totalSeconds(nextPaymentHour, nextPaymentMinute, nextPaymentSecond);
-        _nextPaymentTimestamp = DateTime.add(date, secondsOffset);
+        emit PaymentDue(0, 0, 0, _nextPaymentDueTimestamp);
     }
 
     function _calculateOutstandingAmount() internal returns (uint) {
