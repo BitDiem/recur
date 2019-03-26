@@ -56,6 +56,22 @@ contract("Subscription Test", accounts => {
     assertState(startingTokenBalance, 0, 0, 0, 0);
   });
 
+  /*it("XXXXXXXX 1 check", async () => {
+    paymentTerms = await MockRecurringPaymentTerms.new(1, 3, 0);
+
+    await advance(7);
+    assertState(startingTokenBalance - 2, 2, 0, 0, 0);
+
+    await advance(18);
+    assertState(startingTokenBalance - 6, 6, 0, 0, 0);
+
+    await advance(19);
+    assertState(startingTokenBalance - 6, 6, 0, 0, 0);
+
+    console.log("passed");
+    assertState(99, 99, 0, 0, 0);
+  });*/
+
   it("should pay normally when payor address has a balance", async () => {    
     await advance(7);
     assertState(startingTokenBalance - 7, 7, 0, 0, 0);
