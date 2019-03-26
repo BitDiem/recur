@@ -13,15 +13,15 @@ contract Months is FixedDate {
 
     constructor(
         uint amount,
-        uint nextPaymentYear,
-        uint nextPaymentMonth,
-        uint nextPaymentDay,
-        uint nextPaymentHour,
-        uint nextPaymentMinute,
-        uint nextPaymentSecond,
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second,
         uint monthIncrement
     )
-        FixedDate(amount, nextPaymentYear, nextPaymentMonth, nextPaymentDay, nextPaymentHour, nextPaymentMinute, nextPaymentSecond)
+        FixedDate(amount, year, month, day, hour, minute, second)
         public
     {
         // use Monthly contract if you want increment = 1
@@ -30,10 +30,10 @@ contract Months is FixedDate {
     }
 
     function _advance() internal {
-        _nextPaymentMonth += _monthIncrement;
-        if (_nextPaymentMonth > 12) {
-            _nextPaymentMonth -= 12;
-            _nextPaymentYear += 1;
+        _month += _monthIncrement;
+        if (_month > 12) {
+            _month -= 12;
+            _year += 1;
         }     
     }
 

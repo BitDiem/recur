@@ -11,23 +11,23 @@ contract Monthly is FixedDate {
 
     constructor(
         uint amount,
-        uint nextPaymentYear,
-        uint nextPaymentMonth,
-        uint nextPaymentDay,
-        uint nextPaymentHour,
-        uint nextPaymentMinute,
-        uint nextPaymentSecond
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second
     )
-        FixedDate(amount, nextPaymentYear, nextPaymentMonth, nextPaymentDay, nextPaymentHour, nextPaymentMinute, nextPaymentSecond)
+        FixedDate(amount, year, month, day, hour, minute, second)
         public
     {}
 
     function _advance() internal {
-        if (_nextPaymentMonth == 12) {
-            _nextPaymentMonth = 1;
-            _nextPaymentYear = _nextPaymentYear + 1;
+        if (_month == 12) {
+            _month = 1;
+            _year = _year + 1;
         } else {
-            _nextPaymentMonth = _nextPaymentMonth + 1;
+            _month = _month + 1;
         }        
     }
 
