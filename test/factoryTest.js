@@ -38,13 +38,26 @@ contract("Publisher FrontEnd Test", accounts => {
       await mockERC20.approve(authorizedTokenTransferer.address, 10000000, {from: payor});
   })
 
-  it("should create a fixed interval subscription", async () => {  
-    transaction = await subscriptionFrontEnd.createFixedIntervalSubscription(
+  it("should create yearly subscription", async () => {  
+    transaction = await subscriptionFrontEnd.createYearlySubscription(
         payee,
         mockERC20.address,
         1,
+        2019, 3, 21, 0, 0, 0,
+        {from: payor}
+    );
+    log = transaction.logs[0];
+    let subscriptionAddress = log.args.subscriptionAddress;
+    subscription = await StandardSubscription.at(subscriptionAddress);
+  });
+
+  it("should create multi monthly subscription", async () => {  
+    transaction = await subscriptionFrontEnd.createMonthsIntervalSubscription(
+        payee,
+        mockERC20.address,
         1,
-        0,
+        2019, 3, 21, 0, 0, 0,
+        3,
         {from: payor}
     );
     log = transaction.logs[0];
@@ -65,13 +78,13 @@ contract("Publisher FrontEnd Test", accounts => {
     subscription = await StandardSubscription.at(subscriptionAddress);
   });
 
-  it("should create multi monthly subscription", async () => {  
-    transaction = await subscriptionFrontEnd.createMonthsSubscription(
+  it("should create days interval subscription", async () => {  
+    transaction = await subscriptionFrontEnd.createDaysIntervalSubscription(
         payee,
         mockERC20.address,
         1,
         2019, 3, 21, 0, 0, 0,
-        3,
+        2,
         {from: payor}
     );
     log = transaction.logs[0];
@@ -79,12 +92,41 @@ contract("Publisher FrontEnd Test", accounts => {
     subscription = await StandardSubscription.at(subscriptionAddress);
   });
 
-  it("should create yearly subscription", async () => {  
-    transaction = await subscriptionFrontEnd.createYearlySubscription(
+  it("should create hours interval subscription", async () => {  
+    transaction = await subscriptionFrontEnd.createHoursIntervalSubscription(
         payee,
         mockERC20.address,
         1,
         2019, 3, 21, 0, 0, 0,
+        5,
+        {from: payor}
+    );
+    log = transaction.logs[0];
+    let subscriptionAddress = log.args.subscriptionAddress;
+    subscription = await StandardSubscription.at(subscriptionAddress);
+  });
+
+  it("should create minutes interval subscription", async () => {  
+    transaction = await subscriptionFrontEnd.createMinutesIntervalSubscription(
+        payee,
+        mockERC20.address,
+        1,
+        2019, 3, 21, 0, 0, 0,
+        15,
+        {from: payor}
+    );
+    log = transaction.logs[0];
+    let subscriptionAddress = log.args.subscriptionAddress;
+    subscription = await StandardSubscription.at(subscriptionAddress);
+  });
+
+  it("should create seconds interval subscription", async () => {  
+    transaction = await subscriptionFrontEnd.createSecondsIntervalSubscription(
+        payee,
+        mockERC20.address,
+        1,
+        2019, 3, 21, 0, 0, 0,
+        120, 
         {from: payor}
     );
     log = transaction.logs[0];
