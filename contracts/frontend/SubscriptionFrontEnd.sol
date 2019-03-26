@@ -7,10 +7,12 @@ import "../lib/factory/SubscriptionFactory.sol";
 import "../lib/factory/MonthlyTermsFactory.sol";
 import "../lib/factory/MonthsTermsFactory.sol";
 import "../lib/factory/YearlyTermsFactory.sol";
-import "../lib/factory/FixedIntervalTermsFactory.sol";
+import "../lib/factory/SecondsTermsFactory.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 contract SubscriptionFrontEnd {
+
+    AuthorizedTokenTransferer private _tokenTransferer;
 
     event SubscriptionCreated(
         StandardSubscription subscriptionAddress,
@@ -20,68 +22,12 @@ contract SubscriptionFrontEnd {
         address payee
     );
 
-    AuthorizedTokenTransferer private _tokenTransferer;
-
     constructor (AuthorizedTokenTransferer tokenTransferer) public {
         _tokenTransferer = tokenTransferer;
     }
 
     function getTokenTransferer() public view returns (AuthorizedTokenTransferer) {
         return _tokenTransferer;
-    }
-
-    function createMonthlySubscription(
-        address payee,
-        IERC20 paymentToken, 
-        uint paymentAmount,
-        uint year,
-        uint month,
-        uint day,
-        uint hour,
-        uint minute,
-        uint second
-    )
-        external
-        returns (StandardSubscription)
-    {
-        PaymentObligation paymentTerms = MonthlyTermsFactory.create(
-            paymentAmount, 
-            year, 
-            month, 
-            day,
-            hour,
-            minute,
-            second
-        );
-        return _createSubscription2(payee, paymentToken, paymentTerms);
-    }
-
-    function createMonthsSubscription(
-        address payee,
-        IERC20 paymentToken, 
-        uint paymentAmount,
-        uint year,
-        uint month,
-        uint day,
-        uint hour,
-        uint minute,
-        uint second,
-        uint monthIncrement
-    )
-        external
-        returns (StandardSubscription)
-    {
-        PaymentObligation paymentTerms = MonthsTermsFactory.create(
-            paymentAmount, 
-            year, 
-            month, 
-            day,
-            hour,
-            minute,
-            second,
-            monthIncrement
-        );
-        return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
     function createYearlySubscription(
@@ -110,17 +56,169 @@ contract SubscriptionFrontEnd {
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
-    function createFixedIntervalSubscription(
+    function createMonthsIntervalSubscription(
         address payee,
         IERC20 paymentToken, 
         uint paymentAmount,
-        uint interval,
-        uint delay
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second,
+        uint monthIncrement
     )
         external
         returns (StandardSubscription)
     {
-        PaymentObligation paymentTerms = FixedIntervalTermsFactory.create(paymentAmount, interval, delay);
+        PaymentObligation paymentTerms = MonthsTermsFactory.create(
+            paymentAmount, 
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second,
+            monthIncrement
+        );
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createMonthlySubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second
+    )
+        external
+        returns (StandardSubscription)
+    {
+        PaymentObligation paymentTerms = MonthlyTermsFactory.create(
+            paymentAmount, 
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second
+        );
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createDaysIntervalSubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second,
+        uint daysIncrement
+    )
+        external
+        returns (StandardSubscription)
+    {
+        PaymentObligation paymentTerms = SecondsTermsFactory.createDays(
+            paymentAmount, 
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second,
+            daysIncrement
+        );
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createHoursIntervalSubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second,
+        uint hoursIncrement
+    )
+        external
+        returns (StandardSubscription)
+    {
+        PaymentObligation paymentTerms = SecondsTermsFactory.createHours(
+            paymentAmount, 
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second,
+            hoursIncrement
+        );
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createMinutesIntervalSubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second,
+        uint minutesIncrement
+    )
+        external
+        returns (StandardSubscription)
+    {
+        PaymentObligation paymentTerms = SecondsTermsFactory.createMinutes(
+            paymentAmount, 
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second,
+            minutesIncrement
+        );
+        return _createSubscription2(payee, paymentToken, paymentTerms);
+    }
+
+    function createSecondsIntervalSubscription(
+        address payee,
+        IERC20 paymentToken, 
+        uint paymentAmount,
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second,
+        uint secondsIncrement
+    )
+        external
+        returns (StandardSubscription)
+    {
+        PaymentObligation paymentTerms = SecondsTermsFactory.createSeconds(
+            paymentAmount, 
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second,
+            secondsIncrement
+        );
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
