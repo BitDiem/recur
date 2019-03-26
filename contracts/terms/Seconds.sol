@@ -7,7 +7,8 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 /**
  * @title Seconds
  * @dev Specifies an initial payment due date and time, as well as an interval, 
- * measured in seconds, between due dates thereafter.
+ * measured in seconds, between due dates thereafter.  Payment amount is fixed 
+ * (every payment is of the same amount).
  */
 contract Seconds is PaymentObligation, MockableCurrentTime {
 
