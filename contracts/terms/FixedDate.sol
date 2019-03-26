@@ -11,18 +11,15 @@ import "../lib/date/MockableCurrentTime.sol";
  * Contract stores the year, month, day and total seconds offset, in addition to a timestamp value.
  * Justification: saves a call to BokkyPooBahsDateTimeLibrary._daysToDate, 
  * at the expense of using a bit more storage (4 additional uint's vs. just storing a timestamp).
- * NOTE: For this contract as well as those deriving from it, specifying a "nextPaymentDay" greater than 31 will ensure 
+ * NOTE: For this contract as well as those deriving from it, specifying a "day" greater than 31 will ensure 
  * that payment is due on the last day of the month, regardless of how many days are in that month.
  */
 contract FixedDate is PaymentObligation, MockableCurrentTime {
 
-    uint constant SECONDS_PER_HOUR = 60 * 60;
-    uint constant SECONDS_PER_MINUTE = 60;
+    uint internal _year;
+    uint internal _month;
 
-    uint internal _nextPaymentYear;
-    uint internal _nextPaymentMonth;
-
-    uint private _nextPaymentDay;
+    uint private _day;
     uint private _secondsOffset;
     uint private _nextPaymentTimestamp;
     uint private _amount;
@@ -31,26 +28,26 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
 
     constructor(
         uint amount,
-        uint nextPaymentYear,
-        uint nextPaymentMonth,
-        uint nextPaymentDay,
-        uint nextPaymentHour,
-        uint nextPaymentMinute,
-        uint nextPaymentSecond
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second
     )
         public
     {
         require(amount > 0);
-        require(DateTime.isValidYearAndMonth(nextPaymentYear, nextPaymentMonth));
-        require(nextPaymentDay > 0);
-        require(DateTime.isValidTime(nextPaymentHour, nextPaymentMinute, nextPaymentSecond));
+        require(DateTime.isValidYearAndMonth(year, month));
+        require(day > 0);
+        require(DateTime.isValidTime(hour, minute, second));
 
         _amount = amount;
-        _nextPaymentYear = nextPaymentYear;
-        _nextPaymentMonth = nextPaymentMonth;
-        _nextPaymentDay = nextPaymentDay;
+        _year = year;
+        _month = month;
+        _day = day;
 
-        _secondsOffset = DateTime.totalSeconds(nextPaymentHour, nextPaymentMinute, nextPaymentSecond);
+        _secondsOffset = DateTime.totalSeconds(hour, minute, second);
         _calculateNextPaymentTimestamp();
     }
 
@@ -72,10 +69,10 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
     /// at the expense of using a bit more storage (4x or 7x vs. just storing a timestamp)
     function _calculateNextPaymentTimestamp() private {
         // adjust for the days of month for payment days greater than 28 (since all months have at least 28 days)
-        uint adjustedPaymentDay = DateTime.constrainToDaysInMonth(_nextPaymentYear, _nextPaymentMonth, _nextPaymentDay);
+        uint adjustedPaymentDay = DateTime.constrainToDaysInMonth(_year, _month, _day);
 
-        // create the timestamp from year, month, and adjusted date
-        uint date = DateTime.timestampFromDate(_nextPaymentYear, _nextPaymentMonth, adjustedPaymentDay);
+        // create the timestamp from year, month, and adjusted date.  Then add the total seconds offset to get exacte due date
+        uint date = DateTime.timestampFromDate(_year, _month, adjustedPaymentDay);
         _nextPaymentTimestamp = DateTime.add(date, _secondsOffset);
     }
 
