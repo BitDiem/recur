@@ -66,7 +66,7 @@ contract("Publisher FrontEnd Test", accounts => {
   });
 
   it("should create multi monthly subscription", async () => {  
-    transaction = await subscriptionFrontEnd.createMultiMonthlySubscription(
+    transaction = await subscriptionFrontEnd.createMonthsSubscription(
         payee,
         mockERC20.address,
         1,
