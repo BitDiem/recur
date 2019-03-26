@@ -14,10 +14,14 @@ library DateTime {
 
     function isValidTime(uint hour, uint minute, uint second) internal pure returns (bool) {
         return (
-            hour > 0 && hour < 25 &&
-            minute > 0 && minute < 61 &&
-            second > 0 && second < 61
+            hour > 0 && hour < 24 &&
+            minute > 0 && minute < 60 &&
+            second > 0 && second < 60
         );
+    }
+
+    function isValidDateTime(uint year, uint month, uint day, uint hour, uint minute, uint second) internal pure returns (bool) {
+        return BokkyPooBahsDateTimeLibrary.isValidDateTime(year, month, day, hour, minute, second);
     }
 
     // note that no overflow check is performed.  Make sure to call "isValidTime" prior to using this function
@@ -35,6 +39,10 @@ library DateTime {
 
     function timestampFromDate(uint year, uint month, uint day) internal pure returns (uint) {
         return BokkyPooBahsDateTimeLibrary.timestampFromDate(year, month, day);
+    }
+
+    function timestampFromDateTime(uint year, uint month, uint day, uint hour, uint minute, uint second) internal pure returns (uint) {
+        return BokkyPooBahsDateTimeLibrary.timestampFromDateTime(year, month, day, hour, minute, second);
     }
 
     // returns the Min between the provided day and total days in the given month
