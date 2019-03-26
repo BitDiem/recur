@@ -41,14 +41,19 @@ contract Seconds is PaymentObligation, MockableCurrentTime {
         emit PaymentDue(0, 0, 0, _nextPaymentDueTimestamp);
     }
 
-    function _calculateOutstandingAmount() internal returns (uint) {
-        if (_getCurrentTimeInUnixSeconds() < _nextPaymentTimestamp)
+    function _calculateOutstandingAmount() internal returns (uint amountDue) {
+        uint currentTime = _getCurrentTimeInUnixSeconds();
+        if (currentTime < _nextPaymentDueTimestamp)
             return 0;
 
-        uint currentPaymentDue = _nextPaymentTimestamp;
-        _nextPaymentTimestamp = DateTime.add(_nextPaymentTimestamp, _secondsIncrement);   
-        emit PaymentDue(currentPaymentDue, _amount);
-        return _amount;
+        uint elapsedTime = currentTime - _nextPaymentDueTimestamp + _secondsIncrement;
+        uint elapsedIntervals = elapsedTime / _secondsIncrement;
+        amountDue = _amount * elapsedIntervals;
+        uint offset = elapsedIntervals * _secondsIncrement;
+        _nextPaymentDueTimestamp = _nextPaymentDueTimestamp.add(offset);   
+        uint currentPaymentDueAt = _nextPaymentDueTimestamp - _secondsIncrement; // no over/underflow check here due to prev line
+
+        emit PaymentDue(currentPaymentDueAt, amountDue, elapsedIntervals, _nextPaymentDueTimestamp);
     }
 
 }
