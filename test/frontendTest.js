@@ -31,7 +31,7 @@ contract("FrontEnd Test", accounts => {
         mockERC20 = await MockERC20.new("Mock ERC20", "MERC20", tokenBank, startingTokenBalance * 2);
         await mockERC20.transfer(payor, startingTokenBalance, {from: tokenBank});
 
-        paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 0);
+        paymentTerms = await MockRecurringPaymentTerms.new(1, 1, 1);
         authorizedTokenTransferer = await AuthorizedTokenTransferer.new();
         subscriptionFrontEnd = await SubscriptionFrontEnd.new(authorizedTokenTransferer.address);
         await authorizedTokenTransferer.addWhitelistAdmin(subscriptionFrontEnd.address);
