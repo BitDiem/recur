@@ -57,7 +57,7 @@ contract("Publisher FrontEnd Test", accounts => {
         payee,
         mockERC20.address,
         1,
-        2019, 3, 21,
+        2019, 3, 21, 0, 0, 0,
         {from: payor}
     );
     log = transaction.logs[0];
@@ -70,7 +70,7 @@ contract("Publisher FrontEnd Test", accounts => {
         payee,
         mockERC20.address,
         1,
-        2019, 3, 21,
+        2019, 3, 21, 0, 0, 0,
         3,
         {from: payor}
     );
@@ -84,7 +84,7 @@ contract("Publisher FrontEnd Test", accounts => {
         payee,
         mockERC20.address,
         1,
-        2019, 3, 21,
+        2019, 3, 21, 0, 0, 0,
         {from: payor}
     );
     log = transaction.logs[0];
