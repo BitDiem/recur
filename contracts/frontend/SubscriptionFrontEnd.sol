@@ -5,7 +5,7 @@ import "../payment/PaymentObligation.sol";
 import "../accounts/AuthorizedTokenTransferer.sol";
 import "../lib/factory/SubscriptionFactory.sol";
 import "../lib/factory/MonthlyTermsFactory.sol";
-import "../lib/factory/MultiMonthlyTermsFactory.sol";
+import "../lib/factory/MonthsTermsFactory.sol";
 import "../lib/factory/YearlyTermsFactory.sol";
 import "../lib/factory/FixedIntervalTermsFactory.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -34,39 +34,51 @@ contract SubscriptionFrontEnd {
         address payee,
         IERC20 paymentToken, 
         uint paymentAmount,
-        uint nextPaymentYear,
-        uint nextPaymentMonth,
-        uint nextPaymentDay
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second
     )
-        public
+        external
         returns (StandardSubscription)
     {
         PaymentObligation paymentTerms = MonthlyTermsFactory.create(
             paymentAmount, 
-            nextPaymentYear, 
-            nextPaymentMonth, 
-            nextPaymentDay
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second
         );
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
 
-    function createMultiMonthlySubscription(
+    function createMonthsSubscription(
         address payee,
         IERC20 paymentToken, 
         uint paymentAmount,
-        uint nextPaymentYear,
-        uint nextPaymentMonth,
-        uint nextPaymentDay,
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second,
         uint monthIncrement
     )
-        public
+        external
         returns (StandardSubscription)
     {
-        PaymentObligation paymentTerms = MultiMonthlyTermsFactory.create(
+        PaymentObligation paymentTerms = MonthsTermsFactory.create(
             paymentAmount, 
-            nextPaymentYear, 
-            nextPaymentMonth, 
-            nextPaymentDay, 
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second,
             monthIncrement
         );
         return _createSubscription2(payee, paymentToken, paymentTerms);
@@ -76,18 +88,24 @@ contract SubscriptionFrontEnd {
         address payee,
         IERC20 paymentToken, 
         uint paymentAmount,
-        uint nextPaymentYear,
-        uint nextPaymentMonth,
-        uint nextPaymentDay
+        uint year,
+        uint month,
+        uint day,
+        uint hour,
+        uint minute,
+        uint second
     )
-        public
+        external
         returns (StandardSubscription)
     {
         PaymentObligation paymentTerms = YearlyTermsFactory.create(
             paymentAmount, 
-            nextPaymentYear, 
-            nextPaymentMonth, 
-            nextPaymentDay
+            year, 
+            month, 
+            day,
+            hour,
+            minute,
+            second
         );
         return _createSubscription2(payee, paymentToken, paymentTerms);
     }
@@ -99,7 +117,7 @@ contract SubscriptionFrontEnd {
         uint interval,
         uint delay
     )
-        public
+        external
         returns (StandardSubscription)
     {
         PaymentObligation paymentTerms = FixedIntervalTermsFactory.create(paymentAmount, interval, delay);
