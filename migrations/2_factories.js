@@ -3,6 +3,7 @@ var MonthlyTermsFactory = artifacts.require("MonthlyTermsFactory");
 var MonthsTermsFactory = artifacts.require("MonthsTermsFactory");
 var YearlyTermsFactory = artifacts.require("YearlyTermsFactory");
 var FixedIntervalTermsFactory = artifacts.require("FixedIntervalTermsFactory");
+var SecondsTermsFactory = artifacts.require("SecondsTermsFactory");
 
 module.exports = function(deployer) {
 
@@ -12,5 +13,6 @@ module.exports = function(deployer) {
   deployer.deploy(MonthsTermsFactory);
   deployer.deploy(YearlyTermsFactory);
   deployer.deploy(FixedIntervalTermsFactory);
+  deployer.deploy(SecondsTermsFactory);
 
 };

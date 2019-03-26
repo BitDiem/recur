@@ -3,6 +3,7 @@ var MonthlyTermsFactory = artifacts.require("MonthlyTermsFactory");
 var MonthsTermsFactory = artifacts.require("MonthsTermsFactory");
 var YearlyTermsFactory = artifacts.require("YearlyTermsFactory");
 var FixedIntervalTermsFactory = artifacts.require("FixedIntervalTermsFactory");
+var SecondsTermsFactory = artifacts.require("SecondsTermsFactory");
 var SubscriptionFrontEnd = artifacts.require("SubscriptionFrontEnd");
 var PublisherFrontEnd = artifacts.require("PublisherFrontEnd");
 
@@ -14,6 +15,7 @@ module.exports = function(deployer) {
   deployer.link(MonthsTermsFactory, [SubscriptionFrontEnd, PublisherFrontEnd]);
   deployer.link(YearlyTermsFactory, [SubscriptionFrontEnd, PublisherFrontEnd]);
   deployer.link(FixedIntervalTermsFactory, [SubscriptionFrontEnd, PublisherFrontEnd]);
+  deployer.link(SecondsTermsFactory, [SubscriptionFrontEnd, PublisherFrontEnd]);
 
   deployer.deploy(PublisherFrontEnd);
 
