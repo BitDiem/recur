@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+/*pragma solidity ^0.5.0;
 
 import "../payment/PaymentObligation.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -58,6 +58,29 @@ contract FixedInterval is PaymentObligation {
     /// Wrap the call and make it internal - makes it easy to create a derived mock class
     function _getCurrentTimeInUnixSeconds() internal view returns (uint) {
         return now;
+    }
+
+}*/
+
+
+pragma solidity ^0.5.0;
+
+import "../terms/Seconds.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+
+/// key difference in how this works vs. fixed date - will pay out all elapsed intervals, not just first
+contract FixedInterval is Seconds {
+
+    using SafeMath for uint;
+
+    constructor(
+        uint amount, 
+        uint timeInterval, // as measured in seconds between intervals
+        uint delay // use case: "first 30 days free"
+    )
+        Seconds(amount, _getCurrentTimeInUnixSeconds().add(delay).add(timeInterval), timeInterval)
+        public
+    {        
     }
 
 }
