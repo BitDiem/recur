@@ -8,9 +8,10 @@ import "../lib/date/MockableCurrentTime.sol";
  * @title FixedDate
  * @dev Base contract for specifying an exact datetime that payment is due on.  
  * Year and month of next payment can be manipulated by child contracts.
- * Contract stores the year, month, day and total seconds offset, in addition to a timestamp value.
- * Justification: saves a call to BokkyPooBahsDateTimeLibrary._daysToDate, 
- * at the expense of using a bit more storage (4 additional uint's vs. just storing a timestamp).
+ * Contract stores the year, month, day and total seconds offset, in addition to a timestamp of the payment due date.
+ * Justification: saves a call to BokkyPooBahsDateTimeLibrary._daysToDate, at the expense of using a bit more 
+ * storage (4 additional uint's vs. just storing the payment due date timestamp).
+ * 
  * NOTE: For this contract as well as those deriving from it, specifying a "day" greater than 31 will ensure 
  * that payment is due on the last day of the month, regardless of how many days are in that month.
  */
@@ -66,7 +67,7 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
     function _advance() internal;
 
     /// saving the year / month / day saves a call to BokkyPooBahsDateTimeLibrary._daysToDate, 
-    /// at the expense of using a bit more storage (4x or 7x vs. just storing a timestamp)
+    /// at the expense of using a bit more storage (4 more uints vs. just storing a timestamp)
     function _calculateNextPaymentTimestamp() private {
         // adjust for the days of month for payment days greater than 28 (since all months have at least 28 days)
         uint adjustedPaymentDay = DateTime.constrainToDaysInMonth(_year, _month, _day);
