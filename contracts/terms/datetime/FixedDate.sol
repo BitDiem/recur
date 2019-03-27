@@ -25,7 +25,11 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
     uint private _nextPaymentTimestamp;
     uint private _amount;
 
-    event PaymentDue(uint paymentDueDate, uint amount);
+    event PaymentDue(
+        uint paymentDueDate,
+        uint amount,
+        uint nextPaymentDueDate
+    );
 
     constructor(
         uint amount,
@@ -40,6 +44,8 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
     {
         require(amount > 0);
         require(DateTime.isValidYearAndMonth(year, month));
+        
+        /// note that we accept any day value greater than 0.  Payment will process on the math.min(day, daysinmonth)
         require(day > 0);
         require(DateTime.isValidTime(hour, minute, second));
 
@@ -50,6 +56,7 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
 
         _secondsOffset = DateTime.totalSeconds(hour, minute, second);
         _calculateNextPaymentTimestamp();
+        emit PaymentDue(0, 0, _nextPaymentTimestamp);
     }
 
     function _calculateOutstandingAmount() internal returns (uint) {
@@ -59,7 +66,7 @@ contract FixedDate is PaymentObligation, MockableCurrentTime {
         uint currentPaymentDue = _nextPaymentTimestamp;
         _advance();
         _calculateNextPaymentTimestamp();    
-        emit PaymentDue(currentPaymentDue, _amount);
+        emit PaymentDue(currentPaymentDue, _amount, _nextPaymentTimestamp);
         return _amount;
     }
 

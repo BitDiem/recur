@@ -25,6 +25,11 @@ contract Seconds is PaymentObligation, MockableCurrentTime {
         uint nextPaymentDueDate
     );
 
+    /**
+     * @param amount Amount due at each due date timestamp.
+     * @param nextPaymentDueTimestamp Due date timestamp for first payment due.
+     * @param secondsIncrement The number of seconds between due dates.
+     */
     constructor(
         uint amount,
         uint nextPaymentDueTimestamp,
@@ -42,6 +47,8 @@ contract Seconds is PaymentObligation, MockableCurrentTime {
         emit PaymentDue(0, 0, 0, _nextPaymentDueTimestamp);
     }
 
+    /// Calculates the number of elapsed intervals between "now" and last payment due date, then uses that to
+    /// determine the amount due and next due date.
     function _calculateOutstandingAmount() internal returns (uint amountDue) {
         uint currentTime = _getCurrentTimeInUnixSeconds();
         if (currentTime < _nextPaymentDueTimestamp)

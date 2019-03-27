@@ -9,7 +9,7 @@ import "./FixedDate.sol";
  */
 contract Months is FixedDate {
 
-    uint private _monthIncrement;
+    uint private _monthIncrements;
 
     constructor(
         uint amount,
@@ -19,18 +19,18 @@ contract Months is FixedDate {
         uint hour,
         uint minute,
         uint second,
-        uint monthIncrement
+        uint monthsIncrement
     )
         FixedDate(amount, year, month, day, hour, minute, second)
         public
     {
-        // use Monthly contract if you want increment = 1
-        require(monthIncrement < 12 && monthIncrement > 1);
-        _monthIncrement = monthIncrement;
+        // use Monthly.sol contract if you want increment = 1
+        require(monthsIncrement < 12 && monthsIncrement > 1);
+        _monthIncrements = monthsIncrement;
     }
 
     function _advance() internal {
-        _month += _monthIncrement;
+        _month += _monthIncrements;
         if (_month > 12) {
             _month -= 12;
             _year += 1;
