@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../terms/FixedDate.sol";
+import "./FixedDate.sol";
 
 /**
  * @title Yearly
