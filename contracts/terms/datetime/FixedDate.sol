@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
-import "../payment/PaymentObligation.sol";
-import "../lib/date/DateTime.sol";
-import "../lib/date/MockableCurrentTime.sol";
+import "../../terms/PaymentObligation.sol";
+import "../../lib/date/DateTime.sol";
+import "../../lib/date/MockableCurrentTime.sol";
 
 /**
  * @title FixedDate

@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../payment/PaymentObligation.sol";
+import "../terms/PaymentObligation.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 

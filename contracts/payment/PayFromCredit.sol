@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../payment/PaymentCredit.sol";
+import "../payment/balances/PaymentCredit.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**

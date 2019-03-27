@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../../terms/Months.sol";
+import "../../terms/datetime/Months.sol";
 
 library MonthsTermsFactory {
 

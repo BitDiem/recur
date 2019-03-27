@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../../terms/Yearly.sol";
+import "../../terms/datetime/Yearly.sol";
 
 library YearlyTermsFactory {
 

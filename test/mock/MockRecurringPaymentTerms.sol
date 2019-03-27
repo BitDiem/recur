@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "../../contracts/terms/Seconds.sol";
+import "../../contracts/terms/datetime/Seconds.sol";
+import "../../contracts/lib/date/DateTime.sol";
 
 contract MockRecurringPaymentTerms is Seconds {
 
@@ -18,6 +19,10 @@ contract MockRecurringPaymentTerms is Seconds {
 
     function setCurrentTimeStamp(uint val) public {
         currentTimeStamp = val;
+    }
+
+    function setCurrentDateTime(uint year, uint month, uint day, uint hour, uint minute, uint second) public {
+        currentTimeStamp = DateTime.timestampFromDateTime(year, month, day, hour, minute, second);
     }
 
     function _getCurrentTimeInUnixSeconds() internal view returns (uint) {

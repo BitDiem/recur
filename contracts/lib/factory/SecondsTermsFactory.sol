@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../../terms/Seconds.sol";
+import "../../terms/datetime/Seconds.sol";
 import "../../lib/date/DateTime.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
