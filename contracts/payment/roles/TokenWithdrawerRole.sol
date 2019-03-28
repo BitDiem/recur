@@ -4,7 +4,10 @@ import "openzeppelin-solidity/contracts/access/Roles.sol";
 
 /**
  * @title TokenWithdrawerRole
- * @dev TODO: write
+ * @dev TokenWithdrawer accounts are allowed to call the withdraw function in TokenEscrow.sol
+ *
+ * NOTE: code is an exact copy of the standard Open Zeppelin implementation of a Role contract.
+ * See any of the contracts in the "openzeppelin-solidity/contracts/access/roles" folder as examples.
  */
 contract TokenWithdrawerRole {
 

@@ -5,7 +5,9 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
  * @title PaymentCredit
- * @dev Encapsulates an amount of credit that can be debited against when making a payment
+ * @dev Stores a credit value that can be debited against when making a payment.  
+ * Approved callers can add or remove to the credit value.  Credit value can also be 
+ * set directly in child contracts.  Emits an event on credit value change.
  */
 contract PaymentCredit is CreditAdminRole {
 
@@ -19,11 +21,19 @@ contract PaymentCredit is CreditAdminRole {
         return _credit;
     }
 
+    /**
+     * @dev Add credit.  Only callable by approved addresses.
+     * @param amount The amount of credit to add to the existing credit value.
+     */
     function addCredit(uint amount) public onlyCreditAdmin {
         require(amount > 0);
         _setCredit(_credit.add(amount));
     }
 
+    /**
+     * @dev Remove credit.  Only callable by approved addresses.
+     * @param amount The amount of credit to deduct from the existing credit value.
+     */
     function removeCredit(uint amount) public onlyCreditAdmin {
         require(amount > 0);
         _setCredit(_credit.sub(amount));

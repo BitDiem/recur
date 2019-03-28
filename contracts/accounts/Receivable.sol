@@ -2,8 +2,8 @@ pragma solidity ^0.5.0;
 
 /**
  * @title Receivable
- * @dev Encapsulates a payee, and allows that payee to transfer payee status to 
- * another account
+ * @dev Stores an address representing a "payee" i.e. the party that will be receiving funds.
+ * Contract allows payee to transfer payee status to another account at any time.
  */
 contract Receivable {
 
@@ -24,6 +24,10 @@ contract Receivable {
         return _payee;
     }
 
+    /**
+     * @dev Transfer the payee address to a new address.  Can only be called by the current payee.
+     * @param payee The new address that will receive funds thereafter.
+     */
     function transferPayee(address payee) public onlyPayee {
         require(_payee != payee);
         _setPayee(payee);

@@ -4,7 +4,10 @@ import "openzeppelin-solidity/contracts/access/Roles.sol";
 
 /**
  * @title CreditAdminRole
- * @dev TODO: write
+ * @dev CreditAdmin accounts are allowed to modify the stored credit value in PaymentCredit.sol
+ *
+ * NOTE: code is an exact copy of the standard Open Zeppelin implementation of a Role contract.
+ * See any of the contracts in the "openzeppelin-solidity/contracts/access/roles" folder as examples.
  */
 contract CreditAdminRole {
 

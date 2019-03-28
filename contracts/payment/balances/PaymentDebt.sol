@@ -1,5 +1,9 @@
 pragma solidity ^0.5.0;
 
+/**
+ * @title PaymentDebt
+ * @dev Stores a debt amount, which can be set in child contracts.  Also emits an event on debt value change.
+ */
 contract PaymentDebt {
 
     uint private _outstandingAmount;
