@@ -2,6 +2,11 @@ pragma solidity ^0.5.0;
 
 import "../../lib/date/BokkyPooBahsDateTimeLibrary.sol";
 
+/**
+ * @title DateTime
+ * @dev Library with convenience functions for working with datetime and timestamp values.
+ * Wraps calls to BokkyPooBahsDateTimeLibrary library (https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary).
+ */
 library DateTime {
 
     uint constant SECONDS_PER_HOUR = 60 * 60;

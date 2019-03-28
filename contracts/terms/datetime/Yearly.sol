@@ -4,7 +4,7 @@ import "./FixedDate.sol";
 
 /**
  * @title Yearly
- * @dev Increments next payment due date by one year.  
+ * @dev Specifies an initial payment due date and time.  Increments next payment due date by one year.  
  * Payment will *always* occur on the same month, the same day, the same hour, and the same second, every year.
  */
 contract Yearly is FixedDate {

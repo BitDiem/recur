@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 /**
  * @title MockableCurrentTime
- * @dev Allows child contracts to easily mock calls to environment "now" variable
+ * @dev Allows child contracts to easily mock calls to the environment "now" variable, for testing purposes.
  */
 contract MockableCurrentTime {
 

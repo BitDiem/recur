@@ -43,7 +43,7 @@ contract Payable {
 
     /**
      * @dev Accepts the responsibility of being the new paying address.  Can only be called by 
-     * the current pendingPayor, which must have been set in a prior call to @transferPayor.
+     * the current pendingPayor, which must have been set in a prior call to transferPayor.
      */
     function approveTransferPayor() public onlyPendingPayor {
         _setPayor(_pendingPayor);

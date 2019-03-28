@@ -2,6 +2,10 @@ pragma solidity ^0.5.0;
 
 import "../../terms/datetime/Monthly.sol";
 
+/**
+ * @title MonthlyTermsFactory
+ * @dev External library for creating an instance of Monthly.sol.
+ */
 library MonthlyTermsFactory {
 
     function create(

@@ -4,7 +4,7 @@ import "./FixedDate.sol";
 
 /**
  * @title Monthly
- * @dev Increments next payment due date by one month.  
+ * @dev Specifies an initial payment due date and time.  Increments next payment due date by one month.  
  * Payment will *always* occur on the same day, the same hour, and the same second, every month.
  */
 contract Monthly is FixedDate {

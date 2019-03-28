@@ -4,6 +4,14 @@ import "../../terms/datetime/Seconds.sol";
 import "../../lib/date/DateTime.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
+/**
+ * @title SecondsTermsFactory
+ * @dev External library for creating different variants of Seconds.sol.  The included variants are:
+ * - Days (intervals of N days per payment due date)
+ * - Hours (intervals of N hours per payment due date)
+ * - Minutes (intervals of N minutes per payment due date)
+ * - Seconds (intervals of N seconds per payment due date)
+ */
 library SecondsTermsFactory {
 
     using SafeMath for uint;
