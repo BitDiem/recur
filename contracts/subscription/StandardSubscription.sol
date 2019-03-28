@@ -13,6 +13,10 @@ import "../accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
+/**
+ * @title StandardSubscription
+ * @dev TODO: write
+ */
 contract StandardSubscription is 
     SubscriptionData,
     Payable, 

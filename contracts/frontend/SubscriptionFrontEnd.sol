@@ -10,6 +10,10 @@ import "../lib/factory/YearlyTermsFactory.sol";
 import "../lib/factory/SecondsTermsFactory.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
+/**
+ * @title SubscriptionFrontEnd
+ * @dev TODO: write
+ */
 contract SubscriptionFrontEnd {
 
     AuthorizedTokenTransferer private _tokenTransferer;

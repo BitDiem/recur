@@ -6,7 +6,7 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title SubscriptionData
- * @dev Readonly data fields required for Subscription logic
+ * @dev Readonly data fields required for Subscription logic.
  */
 contract SubscriptionData {
 

@@ -3,6 +3,10 @@ pragma solidity ^0.5.0;
 import "../frontend/SubscriptionFrontEnd.sol";
 import "../accounts/AuthorizedTokenTransferer.sol";
 
+/**
+ * @title PublisherFrontEnd
+ * @dev TODO: write
+ */
 contract PublisherFrontEnd {
 
     event PublisherCreated(

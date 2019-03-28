@@ -5,6 +5,10 @@ import "openzeppelin-solidity/contracts/access/roles/WhitelistedRole.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-solidity/contracts/math/Math.sol";
 
+/**
+ * @title AuthorizedTokenTransferer
+ * @dev TODO: write
+ */
 contract AuthorizedTokenTransferer is IAuthorizedTokenTransferer, WhitelistedRole { 
 
     event TokenTransferred(
