@@ -4,7 +4,8 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title IAuthorizedTokenTransferer
- * @dev TODO: write
+ * @dev Interface that provides to methods of transferring IERC20 tokens from one address to another.  
+ * See AuthorizedTokenTransferer.sol for further comment on the differences between the two functions.
  */
 interface IAuthorizedTokenTransferer {
 
