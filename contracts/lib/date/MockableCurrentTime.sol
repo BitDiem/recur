@@ -6,7 +6,7 @@ pragma solidity ^0.5.0;
  */
 contract MockableCurrentTime {
 
-    /// Wrap the call and make it internal - makes it easy to create a derived mock class to test exact hypothetical dateTimes
+    /// Override this function in child contracts for mocking/testing exact hypothetical dateTimes
     function _getCurrentTimeInUnixSeconds() internal view returns (uint) {
         return now;
     }

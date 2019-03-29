@@ -18,8 +18,7 @@ contract PayFromContract {
     /**
      * @dev Anyone can transfer a token balance to this contract.  This function gives the payor 
      * a mechanism to pay their debit against their token balance.  The supported scenario is:
-     * Payee transfers an amount of token as a refund, promotion, coupon, credit, etc.  This contract 
-     * holds that token in escrow, only withdrawable by the payor.
+     * Payee transfers an amount of token as a refund, promotion, coupon, credit, etc.
      */
     function _payFromTokenBalance(
         address to,

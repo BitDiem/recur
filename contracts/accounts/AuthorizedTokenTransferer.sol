@@ -64,6 +64,7 @@ contract AuthorizedTokenTransferer is IAuthorizedTokenTransferer, WhitelistedRol
      * @param to The address tokens will be transferred to.
      * @param token The address of the IERC20 token that will be transferred.
      * @param amount The maximum amount of tokens to transfer.
+     * @return The amount that was paid, and the amount that was unpaid.
      */
     function transferMax(
         address from,
