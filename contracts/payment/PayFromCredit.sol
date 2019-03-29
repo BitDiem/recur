@@ -5,7 +5,8 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
  * @title PayFromCredit
- * @dev TODO: Write
+ * @dev Debits the payment amount against the current Credit balance.
+ * Emits an event on successful debit.
  */
 contract PayFromCredit is PaymentCredit {
 

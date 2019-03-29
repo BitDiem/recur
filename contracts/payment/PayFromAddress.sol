@@ -6,7 +6,8 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title PayFromAddress
- * @dev TODO: Write
+ * @dev Transfers an ERC20 token from one address to another by proxying the transfer to a provided IAuthorizedTokenTransferer.
+ * Emits an event on successful transfer.
  */
 contract PayFromAddress {
 

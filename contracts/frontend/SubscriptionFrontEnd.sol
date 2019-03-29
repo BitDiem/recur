@@ -12,7 +12,9 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title SubscriptionFrontEnd
- * @dev TODO: write
+ * @dev A caller interacts with this contract to create Subscriptions.  Functions are provided to create different 
+ * flavors of subscriptions.  Payment terms can be denominated in fixed intervals (seconds, minutes, hours, days) or 
+ * at fixed days/times on different months/years.
  */
 contract SubscriptionFrontEnd {
 

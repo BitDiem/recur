@@ -4,7 +4,8 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title PayFromContract
- * @dev TODO: Write
+ * @dev Transfers an ERC20 token from this contract to a provided address.
+ * Emits an event on successful transfer.
  */
 contract PayFromContract {
 

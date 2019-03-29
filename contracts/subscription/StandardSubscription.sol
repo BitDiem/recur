@@ -15,7 +15,13 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title StandardSubscription
- * @dev TODO: write
+ * @dev Contract orchestrates the determination of an amount of IERC20 tokens due, and the ability to pay that amount due 
+ * by transferring the correct amount of tokens from a subscriber to the party that is offering the subscription or services.
+ *
+ * Three possible funding sources, in execution order, can be used to cover the payment amount:
+ *   1) A virtual Credit amount
+ *   2) This contract's own balance of the specified ERC20 payment token
+ *   3) The specified payor's address
  */
 contract StandardSubscription is 
     SubscriptionData,
@@ -45,12 +51,19 @@ contract StandardSubscription is
     {
     }
 
+    /**
+     * @dev Request the full amount due from the payment terms (PaymentObligation).  Attempt to pay as much as possible 
+     * via the 3 funding sources (credit, internal token balance, payee token balance).
+     */
     function payFullAmountDue() public {
         uint amountDue = getPaymentObligation().currentAmountDue() + getOutstandingAmount();
         uint remainder = _pay(amountDue);
         _setOutstandingAmount(remainder);
     }
 
+    /**
+     * @dev End the subscription, destroying the contract, reclaming gas and transferring any contained ETH to the payor's address.
+     */
     function endSubscription() public {
         require(getPayor() == msg.sender || getPayee() == msg.sender);
         address payable balanceRecipient = address(uint160(getPayor()));
