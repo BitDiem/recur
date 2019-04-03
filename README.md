@@ -18,11 +18,11 @@ The following features are available.  Not every feature needs to be used.  For 
 - [Convenient "frontend" factories](#convenient-"frontend"-factories)
 
 ### Create and destroy
-Create a recurring payment contract which specifies a payor, payee, an ERC20 token address, and a [PaymentObligation](contracts/terms/PaymentObligation.sol) contract which will determine how much is due, and when.  At any time, the payor or the payee can cancel the contract, which in turn selfdestructs both the contract and the linked PaymentObligation contract.
+Create a recurring payment contract which specifies a payor, payee, an ERC20 token address, and a [PaymentObligation](contracts/terms/PaymentObligation.sol) contract which will determine how much is due, and when.  
 
-The recurring payment contract uses an opt-out model.  Tokens will automatically be transferred from the payor's address in accordance with the specified payment terms.  The user may opt-out at any time by cancelling the subscription.  There is no "pause" functionality - we recommend cancelling the recurring payment contract and creating a new one to effect the same result.
+The payor or the payee can cancel the contract at any time, which in turn selfdestructs both the contract and the linked PaymentObligation contract.  The payor will commonly cancel when they no longer want the provider's service.  The payee will commonly cancel in scenarios in which the user is X days, or Y amount, past due on their payments.
 
-Note that both the payor and the payee can opt-out of the contract.  The payor will commonly opt-out when they no longer want the provider's service.  The payee will commonly opt-out in scenarios in which the user is X days, or Y amount, past due on their payments.
+There is no "pause" functionality - we recommend cancelling the recurring payment contract and creating a new one to effect the same result.
 
 ### Transfer payment liability
 When creating a recurring payment contract, you must specify an address for the "payor".  The payor is the address where the ERC20 tokens will be withdrawn from at the time of payment processing.  The payor has the ability to transfer that payment obligation to another address at any time - pending that target address calling an function that accepts reponsibility for the payment obligation.  See [Payable.sol](contracts/accounts/Payable.sol).
