@@ -11,7 +11,6 @@ import "../payment/escrow/TokenEscrow.sol";
 import "../terms/PaymentObligation.sol";
 import "../accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title StandardSubscription
@@ -65,7 +64,7 @@ contract StandardSubscription is
      * @dev End the subscription, destroying the contract, reclaming gas and transferring any contained ETH to the payor's address.
      */
     function endSubscription() public {
-        require(getPayor() == msg.sender || getPayee() == msg.sender);
+        require(isPayor() || isPayee());
         address payable balanceRecipient = address(uint160(getPayor()));
         getPaymentObligation().destroy(balanceRecipient);
         emit SubscriptionEnded(msg.sender);

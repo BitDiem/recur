@@ -20,7 +20,7 @@ contract Payable {
     }
 
     modifier onlyPayor() {
-        require(_payor == msg.sender);
+        require(isPayor());
         _;
     }
 
@@ -31,6 +31,13 @@ contract Payable {
 
     function getPayor() public view returns (address) {
         return _payor;
+    }
+
+    /**
+     * @return true if `msg.sender` is the the current payor.
+     */
+    function isPayor() public view returns (bool) {
+        return msg.sender == _payor;
     }
 
     /**

@@ -16,12 +16,19 @@ contract Receivable {
     }
 
     modifier onlyPayee() {
-        require(_payee == msg.sender);
+        require(isPayee());
         _;
     }
 
     function getPayee() public view returns (address) {
         return _payee;
+    }
+
+    /**
+     * @return true if `msg.sender` is the the current payee.
+     */
+    function isPayee() public view returns (bool) {
+        return msg.sender == _payee;
     }
 
     /**
