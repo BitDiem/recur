@@ -53,9 +53,3 @@ The code that determines when payment is due has been measured to be efficient i
 
 ### Open payment process trigger
 The function to trigger payment processing can be called by any address.  This allows DAPP creators to fill the role of a "payemnt processor" in exchange for bearing the cost of calling the payment process function.  The effective use of Events in our code allows such a DAPP creator to build an efficient payment processing service that only calls the function when needed, after the payment due date has elapsed (perhaps with a small buffer of 30 seconds to 1 minute after payment due).
-
-
-### Payor's address
-The last funding source is the specified payor's address.  The subscriber specifies which address token payments will come from.  That address must call the ERC20 approve function in order for the token transfer at the time of payment processing.
-
-
