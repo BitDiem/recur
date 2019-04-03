@@ -8,14 +8,19 @@ The following features are available.  Not every feature needs to be used.  For 
 - [Transfer payment liability](#transfer-payment-liability)
 - [Transfer payment recipient](#transfer-payment-recipient)
 - [Multiple funding sources](#multiple-funding-sources)
-- [Escrow availability](#escrow-availability)
 - [Flexible refund options](#flexible-refund-options)
+  - [Escrowed refund](#escrowed-refund)
   - [Virtual credit](#virtual-credit)
 - [Extensible payment due logic](#extensible-payment-due-logic)
 - [Efficient/cheap payment processing](#efficient/cheap-payment-processing)
+- [Open payment process trigger](#open-payment-process-trigger)
 
 ### Create and destroy
 Create a recurring payment contract which specifies a payor, payee, an ERC20 token address, and a PaymentObligation contract which will determine how much is due, and when.  At any time, the payor or the payee can cancel the contract, which in turn selfdestruct both the contract and the linked PaymentObligation contract.
+
+The recurring payment contract uses an opt-out model.  Tokens will automatically be transferred from the payor's address in accordance with the specified payment terms.  The user may opt-out at any time by cancelling the subscription.  There is no "pause" functionality - we recommend cancelling the recurring payment contract and creating a new one to effect the same result.
+
+Note that both the payor and the payee can opt-out of the contract.  The payor will commonly opt-out when they no longer want the provider's service.  The payee will commonly opt-out in scenarios in which the user is X days, or Y amount, past due on their payments.
 
 ### Transfer payment liability
 When creating a recurring payment contract, you must specify an address for the "payor".  The payor is the address where the ERC20 tokens will be withdrawn from at the time of payment processing.  The payor has the ability to transfer that payment obligation to another address at any time - pending that target address calling an function that accepts reponsibility for the payment obligation.  See (recur/contracts/accounts/Payable.sol).
@@ -24,36 +29,33 @@ When creating a recurring payment contract, you must specify an address for the 
 You must also specify an address - the "payee" address - that will receive the ERC20 tokens at the time of payment processing.  The payee may modify the address payment will be received at at any time.
 
 ### Multiple funding sources
-A recurring payment contract can be configured to include up to three possible funding sources to use when processing payment:
-1. A virtual Credit amount
+A recurring payment contract can be configured to include multiple possible funding sources to draw from when processing payment:
+1. A virtual credit balance
 2. The subscription address' own balance of the specified ERC20 payment token
 3. The specified payor's address
 
 ### Flexible refund options
-For certain scenarios, such as subscriptions, the payment receipient may desire to issue a refund - perhaps to alleviate a customer dispute, or as part of a promotional credit or marketing effort, etc.  For such scenarios, the payment recipient can send ERC20 tokens directly to the recurring payment contract, where only the payor has rights to withdraw them.  Alternatively, the payment recipient can add to a virtual credit balance.
+For certain scenarios, such as subscriptions, the payment recipient may desire to issue a refund - perhaps to alleviate a customer dispute, or as part of a promotional credit or marketing effort, etc.  For such scenarios, the payment recipient has the option of issuing a refund as transferable ERC20 tokens, or as a virtual non-transferable credit.
 
-#### Virtual Credit
-The virtual credit is represented as a uint value that can be incremented or decremented by the payee (i.e. the service provider).  The service provider can use this to issue a refund that has no transferable value (i.e. can only be applied to future service payments).
+#### Escrowed refund
+The payee can refund the payor at any time by simply sending ERC20 tokens directly to the recurring payment contract.  Only the payor has the rights to withdraw those tokens from the contract.  The contract thus serves as an escrow where only one party has rights to withdraw.  The payor can choose to leave the tokens in the escrow, and those tokens will be applied toward future payments.
 
-### Subscription payment token balance
-There may be times when the service provider desires to issue a refund or real (non-virtual) credit to the subscriber.  In such instances, they should transfer the payment token directly to the subscription address.  The subscriptions token balance will be used for future payments.
+#### Virtual credit
+The virtual credit is represented as a uint value that can be incremented or decremented by the payee (i.e. the service provider).  The service provider can use this to issue a refund that has no transferable value (i.e. can only be applied to future service payments).  Future payments will deduct against this virtual credit balance.
 
-The payor address can withdraw any tokens held withing the subscription address, at any time.  In other words, the subscription contract is treated like a token escrow that only the subscriber can withdraw from.
+### Extensible payment due logic
+The recurring payment contract holds a reference to a PaymentObligation contract which contains all logic to determine the specifics of how much and when payment is due.  Create contracts that inherit from the base PaymentObligation.sol to write new logic for determining payment due criteria.  Included in this release are several date-based payment terms:
+- Fixed intervals - where payment due recurrence is measured in N seconds intervals
+- Same day different month/year - where payment is processed at the exact same day and time (hour/minute/second) but on subsequent months, quarters, years, etc.
+
+### Efficient/cheap payment processing
+The code that determines when payment is due has been measured to be efficient in terms of gas cost, resulting in cheap payment processing (under 10 cents at reasonable gas prices).
+
+### Open payment process trigger
+The function to trigger payment processing can be called by any address.  This allows DAPP creators to fill the role of a "payemnt processor" in exchange for bearing the cost of calling the payment process function.  The effective use of Events in our code allows such a DAPP creator to build an efficient payment processing service that only calls the function when needed, after the payment due date has elapsed (perhaps with a small buffer of 30 seconds to 1 minute after payment due).
+
 
 ### Payor's address
 The last funding source is the specified payor's address.  The subscriber specifies which address token payments will come from.  That address must call the ERC20 approve function in order for the token transfer at the time of payment processing.
 
-## Opt-out
-The subscription contract uses an opt-out model.  Tokens will automatically be transferred from the payor's address in accordance with the specified payment terms.  The user may opt-out at any time by cancelling the subscription.  There is no "pause" functionality - we recommend cancelling the subscription and creating a new one to effect the same result.
 
-Note that both the payor and the payee can opt-out of the subscription.  The payor will commonly opt-out when they no longer want the provider's service.  The payee will commonly opt-out in scenarios in which the user is X days, or Y amount, past due on their payments.
-
-## Feature set
-- Create a subscription
-- Specify payment terms: fixed intervals; same day every week, month, year
-- End a subscription
-- Transfer payment obligation from one address to another
-- Transfer payment recipient address from one address to another
-- Pay from virtual credits
-- Pay from wallet balance
-- Payment trigger function can be called from any address
