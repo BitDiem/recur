@@ -9,9 +9,10 @@ The following features are available.  Not every feature needs to be used.  For 
 - [Transfer payment recipient](#transfer-payment-recipient)
 - [Multiple funding sources](#multiple-funding-sources)
 - [Escrow availability](#escrow-availability)
-- [Virtual credit](#virtual-credit)
+- [Flexible refund options](#flexible-refund-options)
+  - [Virtual credit](#virtual-credit)
 - [Extensible payment due logic](#extensible-payment-due-logic)
-- [Efficient/cheap payment processing](#Efficient/cheap payment processing)
+- [Efficient/cheap payment processing](#efficient/cheap-payment-processing)
 
 ### Create and destroy
 Create a recurring payment contract which specifies a payor, payee, an ERC20 token address, and a PaymentObligation contract which will determine how much is due, and when.  At any time, the payor or the payee can cancel the contract, which in turn selfdestruct both the contract and the linked PaymentObligation contract.
@@ -28,8 +29,11 @@ A recurring payment contract can be configured to include up to three possible f
 2. The subscription address' own balance of the specified ERC20 payment token
 3. The specified payor's address
 
-### Virtual Credit
-The virtual credit is represented as a uint value that can be incremented or decremented by the payee (i.e. the service provider).
+### Flexible refund options
+For certain scenarios, such as subscriptions, the payment receipient may desire to issue a refund - perhaps to alleviate a customer dispute, or as part of a promotional credit or marketing effort, etc.  For such scenarios, the payment recipient can send ERC20 tokens directly to the recurring payment contract, where only the payor has rights to withdraw them.  Alternatively, the payment recipient can add to a virtual credit balance.
+
+#### Virtual Credit
+The virtual credit is represented as a uint value that can be incremented or decremented by the payee (i.e. the service provider).  The service provider can use this to issue a refund that has no transferable value (i.e. can only be applied to future service payments).
 
 ### Subscription payment token balance
 There may be times when the service provider desires to issue a refund or real (non-virtual) credit to the subscriber.  In such instances, they should transfer the payment token directly to the subscription address.  The subscriptions token balance will be used for future payments.
