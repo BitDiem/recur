@@ -10,8 +10,9 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 /**
  * @title TokenVesting
- * @dev Contract orchestrates the determination of an amount of IERC20 tokens due, and the ability to pay that amount due 
- * by transferring the correct amount of tokens from a subscriber to the party that is offering the subscription or services.
+ * @dev Contract that transfers IERC20 tokens to a recipient according to a vesting schedule as defined by the
+ * provided PaymentObligation contract.  Tokens are escrowed within the contract; they are either eventually all
+ * transferred to the recipient, or released back to the owner of this contract upon contract destruction. 
  */
 contract TokenVesting is
     Ownable,
@@ -59,7 +60,7 @@ contract TokenVesting is
         getPaymentObligation().destroy(balanceRecipient);
 
         // release the remaining unvested tokens back to the contract owner
-        uint remainder = _payFromTokenBalance(owner(), getToken(), UINT_MAX);  // TODO: the 3rd parameter should be largest possible uint value
+        uint remainder = _payFromTokenBalance(owner(), getToken(), UINT_MAX);
         uint unvestedAmount = UINT_MAX - remainder;
 
         emit TokenVestingEnded(msg.sender, unvestedAmount);
