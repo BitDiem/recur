@@ -46,7 +46,7 @@ The payee can refund the payor at any time by simply sending ERC20 tokens direct
 The virtual credit is represented as a uint value that can be incremented or decremented by the payee (i.e. the service provider).  The service provider can use this to issue a refund that has no transferable value (i.e. can only be applied to future service payments).  Future payments will deduct against this virtual credit balance.  See [PaymentCredit.sol](contracts/payment/balances/PaymentCredit.sol).
 
 ### Extensible payment due logic
-The recurring payment contract holds a reference to a PaymentObligation contract which contains all logic to determine the specifics of how much and when payment is due.  Create contracts that inherit from the base [PaymentObligation.sol](contracts/terms/PaymentObligation.sol) to write new logic for determining payment due criteria.  Included in this release are several date-based payment terms:
+The recurring payment contract holds a reference to a PaymentObligation contract which contains all logic to determine the specifics of how much and when payment is due.  Create contracts that inherit from the base [PaymentObligation.sol](contracts/terms/PaymentObligation.sol) to write new logic for determining payment due criteria.  Included in this release are several datetime-based payment terms:
 - [Fixed intervals](contracts/terms/datetime/Seconds.sol) - where payment due recurrence is measured in N seconds intervals
 - [Same day different month/year](contracts/terms/datetime/FixedDate.sol) - where payment is processed at the exact same day and time (hour/minute/second) but on subsequent months, quarters, years, etc.
 
