@@ -1,26 +1,29 @@
 # Recur - Recurring Payments on Ethereum
 Recur is a smart contract platform for enabling recurring ERC20 token payments on the Ethereum blockchain.  All contracts are written in Solidity.  Recurring payments can encompass: subscriptions, remittances, payroll, freelancer payments, stipends, token vesting, etc.
 
-# Features
+## Features
 The following features are available.  Not every feature needs to be used.  For example, you can create a remittance contract that doesn't feature the virtual credit functionality, while having a subscription contract that includes it since it makes sense in that context.
 
 - [Create and destroy](#create-and-destroy)
 - [Transfer payment liability](#transfer-payment-liability)
-- Transfer payment recipient
-- Multiple funding sources
-- Escrow availability
-- Virtual credit
-- Extensible payment due logic
-- Efficient (cheap) payment processing
+- [Transfer payment recipient](#transfer-payment-recipient)
+- [Multiple funding sources](#multiple-funding-sources)
+- [Escrow availability](#escrow-availability)
+- [Virtual credit](#virtual-credit)
+- [Extensible payment due logic](#extensible-payment-due-logic)
+- [Efficient/cheap payment processing](#Efficient/cheap payment processing)
 
-## Create and Destroy
+### Create and destroy
 Create a recurring payment contract which specifies a payor, payee, an ERC20 token address, and a PaymentObligation contract which will determine how much is due, and when.  At any time, the payor or the payee can cancel the contract, which in turn selfdestruct both the contract and the linked PaymentObligation contract.
 
-## Transfer Payment Liability
+### Transfer payment liability
 When creating a recurring payment contract, you must specify an address for the "payor".  The payor is the address where the ERC20 tokens will be withdrawn from at the time of payment processing.  The payor has the ability to transfer that payment obligation to another address at any time - pending that target address calling an function that accepts reponsibility for the payment obligation.  See (recur/contracts/accounts/Payable.sol).
 
-## Multiple funding sources
-When a payment is processed, there are three possible funding sources that can be used to cover the payment amount:
+### Transfer payment recipient
+You must also specify an address - the "payee" address - that will receive the ERC20 tokens at the time of payment processing.  The payee may modify the address payment will be received at at any time.
+
+### Multiple funding sources
+A recurring payment contract can be configured to include up to three possible funding sources to use when processing payment:
 1. A virtual Credit amount
 2. The subscription address' own balance of the specified ERC20 payment token
 3. The specified payor's address
