@@ -11,12 +11,12 @@ import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
  */
 contract TokenFundsDispute is DisputeResolverRole {
 
-    IERC20 _disputedToken;
-    uint _disputedAmount;
-    IERC20 _rewardToken;
-    uint _rewardAmount;
-    address _party1;
-    address _party2;
+    IERC20 private _disputedToken;
+    uint private _disputedAmount;
+    IERC20 private _rewardToken;
+    uint private _rewardAmount;
+    address private _party1;
+    address private _party2;
 
     event DisputeResolved(
         IERC20 disputedToken, 
