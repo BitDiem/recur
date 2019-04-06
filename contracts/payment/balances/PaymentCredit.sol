@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../../payment/roles/CreditAdminRole.sol";
+import "./CreditAdminRole.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
