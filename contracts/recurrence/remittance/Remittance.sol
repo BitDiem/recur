@@ -1,12 +1,12 @@
 pragma solidity ^0.5.0;
 
-import "../subscription/SubscriptionData.sol";
-import "../accounts/Payable.sol";
-import "../accounts/Receivable.sol";
-import "../payment/PayFromAddress.sol";
-import "../payment/balances/PaymentDebt.sol";
-import "../terms/PaymentObligation.sol";
-import "../accounts/IAuthorizedTokenTransferer.sol";
+import "../../recurrence/subscription/SubscriptionData.sol";
+import "../../accounts/Payable.sol";
+import "../../accounts/Receivable.sol";
+import "../../payment/PayFromAddress.sol";
+import "../../payment/balances/PaymentDebt.sol";
+import "../../terms/PaymentObligation.sol";
+import "../../accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**

@@ -1,15 +1,15 @@
 pragma solidity ^0.5.0;
 
-import "../subscription/SubscriptionData.sol";
-import "../accounts/Payable.sol";
-import "../accounts/Receivable.sol";
-import "../payment/PayFromCredit.sol";
-import "../payment/PayFromContract.sol";
-import "../payment/PayFromAddress.sol";
-import "../payment/balances/PaymentDebt.sol";
-import "../payment/escrow/TokenEscrow.sol";
-import "../terms/PaymentObligation.sol";
-import "../accounts/IAuthorizedTokenTransferer.sol";
+import "./SubscriptionData.sol";
+import "../../accounts/Payable.sol";
+import "../../accounts/Receivable.sol";
+import "../../payment/PayFromCredit.sol";
+import "../../payment/PayFromContract.sol";
+import "../../payment/PayFromAddress.sol";
+import "../../payment/balances/PaymentDebt.sol";
+import "../../token/TokensWithdrawable.sol";
+import "../../terms/PaymentObligation.sol";
+import "../../accounts/IAuthorizedTokenTransferer.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
@@ -30,7 +30,7 @@ contract StandardSubscription is
     PayFromContract,
     PayFromAddress,
     PaymentDebt, 
-    TokenEscrow
+    TokensWithdrawable
 {
     
     event PaymentProcessed(uint totalPaid, uint remainder);
@@ -63,7 +63,7 @@ contract StandardSubscription is
     /**
      * @dev End the subscription, destroying the contract, reclaming gas and transferring any contained ETH to the payor's address.
      */
-    function endSubscription() public {
+    function end() public {
         require(isPayor() || isPayee());
         address payable balanceRecipient = address(uint160(getPayor()));
         getPaymentObligation().destroy(balanceRecipient);
