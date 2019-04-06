@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../subscription/StandardSubscription.sol";
+import "../recurrence/subscription/StandardSubscription.sol";
 import "../terms/PaymentObligation.sol";
 import "../accounts/AuthorizedTokenTransferer.sol";
 import "../lib/factory/SubscriptionFactory.sol";
