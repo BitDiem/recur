@@ -1,15 +1,15 @@
 pragma solidity ^0.5.0;
 
-import "../../payment/roles/TokenWithdrawerRole.sol";
+import "./TokenWithdrawerRole.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 /**
- * @title TokenEscrow
+ * @title TokensWithdrawable
  * @dev Allows withdrawal of any ERC20 tokens sent to this contract.  
  * The call to withdraw tokens is restricted to approved addresses only.
  * Emits an event on successful token withdrawal.
  */
-contract TokenEscrow is TokenWithdrawerRole {
+contract TokensWithdrawable is TokenWithdrawerRole {
 
     event TokenWithdrawn(address indexed withdrawer, IERC20 indexed token, uint amount);
 
